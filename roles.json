@@ -1,0 +1,514 @@
+{
+ "rolemap": {
+  "apex_stier": "apex",
+  "currency_a": "currency_a",
+  "currency_b": "currency_b",
+  "currency_c": "currency_c",
+  "currency_d": "currency_d",
+  "currency_dlow": "supply_mid",
+  "currency_e": "currency_e",
+  "currency_supply2": "supply_mid",
+  "currency_supply4": "supply_low",
+  "fragments_a": "fragment_a",
+  "fragments_b": "fragment_b",
+  "fragments_c": "fragment_c",
+  "fragments_d": "fragment_d",
+  "fragments_e": "fragment_e",
+  "fragments_fragdmuted": "fragment_d",
+  "fragments_splinter1": "fragment_a",
+  "fragments_splinter2": "fragment_b",
+  "fragments_splinter3": "fragment_c",
+  "fragments_splinter4": "fragment_d",
+  "fragments_splinter5": "fragment_e",
+  "uniques_t0": "unique_t0",
+  "uniques_a": "unique_a",
+  "uniques_b": "unique_b",
+  "uniques_c": "unique_c",
+  "uniques_exceptional": "unique_exceptional",
+  "uniques_x": "unique_special",
+  "uniques_xbossdrop": "unique_boss",
+  "exotics_btier": "exotic_high",
+  "exotics_ctier": "exotic_high",
+  "exotics_dtier": "exotic_low",
+  "exotics_identifiedmod": "exotic_mod",
+  "exotics_artifacthigh": "artifact_high",
+  "exotics_artifact": "artifact",
+  "exotics_corrupt": "corrupt",
+  "exotics_corrupthigh": "corrupt_high",
+  "typebased_gems1": "gem_high",
+  "typebased_gems2": "gem_high",
+  "typebased_gems3": "gem_low",
+  "typebased_quest": "quest",
+  "maps_regularhighest": "map_top",
+  "maps_regularhigh": "map_high",
+  "maps_regularmid": "map_mid",
+  "maps_regularlow": "map_low",
+  "maps_specialb": "map_special_high",
+  "maps_specialc": "map_special_low",
+  "maps_deco1": "deco_bright",
+  "maps_deco2": "deco_bright",
+  "maps_deco3": "deco_dim",
+  "maps_deco4": "deco_dim",
+  "maps_decooverlevel": "deco_dim",
+  "maps_decotierupgrade": "deco_upgrade",
+  "gear_tieredjewellery": "jewel_tiered",
+  "gear_jewelrare": "jewel_tiered",
+  "gear_jewellery1": "jewel_ground_high",
+  "gear_jewellery2": "jewel_ground_low",
+  "gear_decojewellery": "jewel_deco",
+  "gear_jewelmagic": "jewel_magic",
+  "gear_jewelmagiclow": "jewel_magic_low",
+  "gear_highlightdrop2": "ground_high",
+  "gear_highlightdrop3": "ground_high",
+  "gear_highlightedsize": "ground_mid",
+  "gear_weakrare1": "ground_weak",
+  "gear_weakrareleveling1": "ground_weak",
+  "gear_weakrare2": "ground_weak2",
+  "gear_vendor": "ground_vendor",
+  "utility_unremarkabledrop": "ground_unremarkable",
+  "itemproperty_achancing": "craft_chance",
+  "itemproperty_bchancing": "craft_chance_low",
+  "itemproperty_aecocraft": "craft_eco_a",
+  "itemproperty_becocraft": "craft_eco_b",
+  "itemproperty_level82": "craft_level82",
+  "itemproperty_toplevelbased1": "craft_toplevel",
+  "itemproperty_salvage1": "salvage_bright",
+  "itemproperty_salvagelvl1": "salvage_bright",
+  "itemproperty_salvage2": "salvage_dim",
+  "typebased_flaskcharms": "flask_charm",
+  "typebased_flaskcharms1high": "flask_charm_high",
+  "gold_pilehuge": "gold_huge",
+  "gold_pilelarge": "gold_large",
+  "gold_pilemedium": "gold_medium",
+  "gold_pilesmall": "gold_small",
+  "xeno_a": "currency_a",
+  "xeno_b": "currency_b",
+  "xeno_c": "currency_c",
+  "xeno_d": "xeno_d",
+  "xeno_e": "supply_low",
+  "utility_unknownitem": "unknown_item",
+  "utility_decoremovernormal": "deco_remove_normal",
+  "utility_decoremovermagic": "deco_remove_magic",
+  "utility_basicraredecorator": "rare_deco",
+  "currency_dvariant": "supply_variant"
+ },
+ "noColour": [
+  "gear_unstyled",
+  "utility_highlight3",
+  "utility_highlight4",
+  "utility_minimize"
+ ],
+ "noClass": [
+  [
+   "\\$type->endgame->flasks",
+   "flask_endgame"
+  ],
+  [
+   "\\$type->leveling->flasks->life",
+   "flask_life"
+  ],
+  [
+   "\\$type->leveling->flasks->mana",
+   "flask_mana"
+  ],
+  [
+   "\\$type->currency->leveling \\$tier->rare",
+   "leveling_currency_rare"
+  ],
+  [
+   "\\$type->currency->leveling \\$tier->magic",
+   "leveling_currency_magic"
+  ],
+  [
+   "\\$type->currency->leveling \\$tier->wisdomstart",
+   "leveling_currency_start"
+  ]
+ ],
+ "roleInfo": {
+  "apex": [
+   "Apex",
+   "Divine Orb",
+   "Currency"
+  ],
+  "currency_a": [
+   "Currency A",
+   "Orb of Chance",
+   "Currency"
+  ],
+  "currency_b": [
+   "Currency B",
+   "Chaos Orb",
+   "Currency"
+  ],
+  "currency_c": [
+   "Currency C",
+   "Exalted Orb",
+   "Currency"
+  ],
+  "currency_d": [
+   "Currency D",
+   "Orb of Alchemy",
+   "Currency"
+  ],
+  "currency_e": [
+   "Currency E",
+   "Lesser Jeweller's Orb",
+   "Currency"
+  ],
+  "supply_mid": [
+   "Vendor Supplies",
+   "Orb of Transmutation",
+   "Currency"
+  ],
+  "supply_low": [
+   "Supplies, Low",
+   "Scroll of Wisdom",
+   "Currency"
+  ],
+  "fragment_a": [
+   "Fragment A",
+   "Breachstone",
+   "Fragments"
+  ],
+  "fragment_b": [
+   "Fragment B",
+   "Simulacrum Splinter",
+   "Fragments"
+  ],
+  "fragment_c": [
+   "Fragment C",
+   "Breach Splinter",
+   "Fragments"
+  ],
+  "fragment_d": [
+   "Fragment D",
+   "Timeless Splinter",
+   "Fragments"
+  ],
+  "fragment_e": [
+   "Fragment E",
+   "Splinter",
+   "Fragments"
+  ],
+  "unique_t0": [
+   "Unique T0 / Chase",
+   "Unique Item",
+   "Uniques"
+  ],
+  "unique_a": [
+   "Unique T2",
+   "Unique Item",
+   "Uniques"
+  ],
+  "unique_b": [
+   "Unique T3",
+   "Unique Item",
+   "Uniques"
+  ],
+  "unique_c": [
+   "Unique, Low",
+   "Unique Item",
+   "Uniques"
+  ],
+  "unique_exceptional": [
+   "Unique, Exceptional",
+   "Corrupted Unique",
+   "Uniques"
+  ],
+  "unique_special": [
+   "Unique, Special Base",
+   "Unique Item",
+   "Uniques"
+  ],
+  "unique_boss": [
+   "Unique, Boss Drop",
+   "Unique Item",
+   "Uniques"
+  ],
+  "exotic_high": [
+   "Exotic Base",
+   "Breach Ring",
+   "Exotics"
+  ],
+  "exotic_low": [
+   "Exotic Base, Low",
+   "Breach Ring",
+   "Exotics"
+  ],
+  "exotic_mod": [
+   "Exotic Mod",
+   "Recombinator Base",
+   "Exotics"
+  ],
+  "artifact_high": [
+   "Artifact, High",
+   "Expert Dualstring Bow",
+   "Exotics"
+  ],
+  "artifact": [
+   "Artifact",
+   "Fishing Rod",
+   "Exotics"
+  ],
+  "corrupt": [
+   "Corrupted Marker",
+   "Corrupted Base",
+   "Exotics"
+  ],
+  "corrupt_high": [
+   "Corrupted, High",
+   "Corrupted Base",
+   "Exotics"
+  ],
+  "gem_high": [
+   "Gem",
+   "Uncut Skill Gem",
+   "Gems"
+  ],
+  "gem_low": [
+   "Gem, Low",
+   "Uncut Support Gem",
+   "Gems"
+  ],
+  "quest": [
+   "Quest Item",
+   "Quest Item",
+   "Gems"
+  ],
+  "map_top": [
+   "Waystone T16",
+   "Waystone (Tier 16)",
+   "Waystones"
+  ],
+  "map_high": [
+   "Waystone, High",
+   "Waystone (Tier 14)",
+   "Waystones"
+  ],
+  "map_mid": [
+   "Waystone, Mid",
+   "Waystone (Tier 9)",
+   "Waystones"
+  ],
+  "map_low": [
+   "Waystone, Low",
+   "Waystone (Tier 3)",
+   "Waystones"
+  ],
+  "map_special_high": [
+   "Map-Like, High",
+   "Expedition Logbook",
+   "Waystones"
+  ],
+  "map_special_low": [
+   "Map-Like",
+   "Trial Coins",
+   "Waystones"
+  ],
+  "deco_bright": [
+   "Waystone Deco",
+   "Waystone (Tier 15)",
+   "Waystones"
+  ],
+  "deco_dim": [
+   "Waystone Deco, Dim",
+   "Waystone (Tier 10)",
+   "Waystones"
+  ],
+  "deco_upgrade": [
+   "Waystone Upgrade",
+   "Waystone (Tier 16)",
+   "Waystones"
+  ],
+  "jewel_tiered": [
+   "Jewellery, Tiered",
+   "Stellar Amulet",
+   "Gear"
+  ],
+  "jewel_ground_high": [
+   "Jewellery Ground",
+   "Sapphire Ring",
+   "Gear"
+  ],
+  "jewel_ground_low": [
+   "Jewellery Ground, Low",
+   "Gold Amulet",
+   "Gear"
+  ],
+  "jewel_deco": [
+   "Jewellery Deco",
+   "Amber Amulet",
+   "Gear"
+  ],
+  "jewel_magic": [
+   "Jewel, Magic",
+   "Breach Ring",
+   "Gear"
+  ],
+  "jewel_magic_low": [
+   "Jewel, Magic Low",
+   "Breach Ring",
+   "Gear"
+  ],
+  "ground_high": [
+   "Gear Ground, High",
+   "Sapphire Ring",
+   "Gear"
+  ],
+  "ground_mid": [
+   "Gear Ground",
+   "Stellar Amulet",
+   "Gear"
+  ],
+  "ground_weak": [
+   "Weak Rare",
+   "Rusted Sallet",
+   "Gear"
+  ],
+  "ground_weak2": [
+   "Weak Rare, Alt",
+   "Hardwood Buckler",
+   "Gear"
+  ],
+  "ground_vendor": [
+   "Vendor Trash",
+   "Iron Greaves",
+   "Gear"
+  ],
+  "ground_unremarkable": [
+   "Unremarkable",
+   "Leather Belt",
+   "Gear"
+  ],
+  "craft_chance": [
+   "Chancing Base",
+   "Sapphire Ring",
+   "Crafting"
+  ],
+  "craft_chance_low": [
+   "Chancing Base, Low",
+   "Silver Charm",
+   "Crafting"
+  ],
+  "craft_eco_a": [
+   "Economy Craft A",
+   "Expert Dualstring Bow",
+   "Crafting"
+  ],
+  "craft_eco_b": [
+   "Economy Craft B",
+   "Expert Laced Boots",
+   "Crafting"
+  ],
+  "craft_level82": [
+   "Item Level 82+",
+   "Furtive Wraps",
+   "Crafting"
+  ],
+  "craft_toplevel": [
+   "Top Base Level",
+   "Omen Sceptre",
+   "Crafting"
+  ],
+  "salvage_bright": [
+   "Salvageable",
+   "Advanced Vaal Cuirass",
+   "Crafting"
+  ],
+  "salvage_dim": [
+   "Salvageable, Dim",
+   "Studded Vest",
+   "Crafting"
+  ],
+  "flask_charm": [
+   "Charm",
+   "Ruby Charm",
+   "Flasks"
+  ],
+  "flask_charm_high": [
+   "Charm, High",
+   "Golden Charm",
+   "Flasks"
+  ],
+  "flask_endgame": [
+   "Flask, Endgame",
+   "Ultimate Life Flask",
+   "Flasks"
+  ],
+  "flask_life": [
+   "Life Flask",
+   "Greater Life Flask",
+   "Flasks"
+  ],
+  "flask_mana": [
+   "Mana Flask",
+   "Greater Mana Flask",
+   "Flasks"
+  ],
+  "gold_huge": [
+   "Gold, Huge Pile",
+   "Gold",
+   "Gold"
+  ],
+  "gold_large": [
+   "Gold, Large",
+   "Gold",
+   "Gold"
+  ],
+  "gold_medium": [
+   "Gold, Medium",
+   "Gold",
+   "Gold"
+  ],
+  "gold_small": [
+   "Gold, Small",
+   "Gold",
+   "Gold"
+  ],
+  "xeno_d": [
+   "New League D",
+   "Unknown Item",
+   "New League"
+  ],
+  "unknown_item": [
+   "Unrecognised Item",
+   "Unrecognised Item",
+   "New League"
+  ],
+  "deco_remove_normal": [
+   "Deco Remover",
+   "Iron Ring",
+   "Utility"
+  ],
+  "deco_remove_magic": [
+   "Deco Remover, Magic",
+   "Lazuli Ring",
+   "Utility"
+  ],
+  "rare_deco": [
+   "Rare Outline",
+   "Rare Item",
+   "Utility"
+  ],
+  "leveling_currency_rare": [
+   "Levelling Currency",
+   "Orb of Alchemy",
+   "Levelling"
+  ],
+  "leveling_currency_magic": [
+   "Levelling Currency, Magic",
+   "Orb of Transmutation",
+   "Levelling"
+  ],
+  "leveling_currency_start": [
+   "Levelling Currency, Start",
+   "Scroll of Wisdom",
+   "Levelling"
+  ],
+  "supply_variant": [
+   "Utility Variant",
+   "Greater Orb of Transmutation",
+   "Currency"
+  ]
+ }
+}

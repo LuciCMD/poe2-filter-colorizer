@@ -1,0 +1,415 @@
+{
+ "name": "Graphite",
+ "author": "LuciferTFFT#1636",
+ "notes": "Monochrome greys ranked by brightness, with one ember accent kept for uniques. Quiet on screen, so the few coloured drops stand out.",
+ "roles": {
+  "apex": {
+   "t": "34 34 34",
+   "b": "255 202 183",
+   "g": "248 248 248",
+   "e": "White",
+   "m": "White"
+  },
+  "currency_a": {
+   "t": "32 34 37",
+   "b": "240 242 244",
+   "g": "218 222 229",
+   "e": "White",
+   "m": "White"
+  },
+  "currency_b": {
+   "t": "32 34 37",
+   "b": "240 242 244",
+   "g": "198 203 210",
+   "e": "White",
+   "m": "White"
+  },
+  "currency_c": {
+   "t": "32 34 37",
+   "b": "240 242 244",
+   "g": "176 180 187",
+   "e": "White",
+   "m": "White"
+  },
+  "currency_d": {
+   "t": "32 34 37",
+   "b": "240 242 244",
+   "g": "154 159 165",
+   "e": "Grey",
+   "m": "Grey"
+  },
+  "supply_mid": {
+   "t": "185 190 198",
+   "b": "119 122 128",
+   "g": "63 64 66"
+  },
+  "currency_e": {
+   "t": "212 216 222",
+   "b": "212 216 222",
+   "g": "55 57 61",
+   "e": "White",
+   "m": "White"
+  },
+  "supply_low": {
+   "t": "161 165 171"
+  },
+  "supply_variant": {
+   "t": "162 165 169",
+   "b": "162 165 169",
+   "g": "48 50 52",
+   "e": "Grey",
+   "m": "Grey"
+  },
+  "fragment_a": {
+   "t": "39 33 24",
+   "b": "245 241 235",
+   "g": "213 200 183",
+   "e": "White",
+   "m": "White"
+  },
+  "fragment_b": {
+   "t": "39 33 24",
+   "b": "245 241 235",
+   "g": "195 185 171",
+   "e": "White",
+   "m": "White"
+  },
+  "fragment_c": {
+   "t": "224 214 200",
+   "b": "224 214 200",
+   "g": "63 56 47",
+   "e": "White",
+   "m": "White"
+  },
+  "fragment_d": {
+   "t": "224 214 200",
+   "b": "128 121 113",
+   "g": "63 56 47"
+  },
+  "fragment_e": {
+   "t": "197 188 176",
+   "b": "128 121 113",
+   "g": "48 50 52"
+  },
+  "unique_t0": {
+   "t": "60 19 0",
+   "b": "255 238 230",
+   "g": "249 104 0",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_a": {
+   "t": "60 19 0",
+   "b": "255 238 230",
+   "g": "255 142 89",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_b": {
+   "t": "255 202 179",
+   "b": "255 202 179",
+   "g": "97 36 0",
+   "e": "Brown",
+   "m": "Brown"
+  },
+  "unique_c": {
+   "t": "219 143 108",
+   "b": "167 105 76",
+   "g": "77 37 18",
+   "e": "Brown",
+   "m": "Brown"
+  },
+  "unique_exceptional": {
+   "t": "242 242 242",
+   "b": "202 221 213",
+   "g": "54 57 63",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_special": {
+   "t": "60 20 1",
+   "b": "255 238 230",
+   "g": "222 142 105",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_boss": {
+   "t": "64 13 0",
+   "b": "255 237 232",
+   "g": "241 139 108",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "exotic_high": {
+   "t": "202 221 213",
+   "b": "202 221 213",
+   "g": "48 60 56",
+   "e": "White",
+   "m": "White"
+  },
+  "exotic_low": {
+   "t": "154 168 163",
+   "b": "154 168 163",
+   "e": "White"
+  },
+  "exotic_mod": {
+   "t": "202 221 213",
+   "b": "202 221 213",
+   "g": "54 57 63",
+   "e": "White",
+   "m": "White"
+  },
+  "artifact_high": {
+   "t": "227 212 201",
+   "b": "227 212 201",
+   "g": "64 55 48",
+   "e": "White",
+   "m": "White"
+  },
+  "artifact": {
+   "t": "227 212 201",
+   "b": "227 212 201",
+   "g": "54 48 44",
+   "e": "White",
+   "m": "White"
+  },
+  "corrupt": {
+   "b": "152 110 106 240"
+  },
+  "corrupt_high": {
+   "b": "255 200 195"
+  },
+  "gem_high": {
+   "t": "198 220 229",
+   "b": "198 220 229",
+   "g": "46 60 66",
+   "e": "White",
+   "m": "White"
+  },
+  "gem_low": {
+   "t": "151 168 175",
+   "b": "151 168 175",
+   "e": "White"
+  },
+  "quest": {
+   "t": "204 221 206",
+   "e": "White",
+   "m": "White"
+  },
+  "map_top": {
+   "t": "32 34 37",
+   "b": "240 242 244",
+   "g": "218 222 229",
+   "e": "White",
+   "m": "White"
+  },
+  "map_high": {
+   "t": "224 214 200",
+   "b": "224 214 200",
+   "g": "63 56 47",
+   "e": "White",
+   "m": "White"
+  },
+  "map_mid": {
+   "t": "240 242 245",
+   "e": "White",
+   "m": "White"
+  },
+  "map_low": {
+   "t": "186 190 196",
+   "e": "White",
+   "m": "White"
+  },
+  "map_special_high": {
+   "t": "39 33 24",
+   "b": "245 241 235",
+   "g": "200 188 171",
+   "e": "White",
+   "m": "White"
+  },
+  "map_special_low": {
+   "t": "224 214 200",
+   "b": "224 214 200",
+   "e": "White",
+   "m": "White"
+  },
+  "deco_bright": {
+   "b": "240 242 245"
+  },
+  "deco_dim": {
+   "b": "186 190 196"
+  },
+  "deco_upgrade": {
+   "b": "227 212 201"
+  },
+  "jewel_tiered": {
+   "t": "226 213 196",
+   "b": "226 213 196",
+   "g": "64 56 45",
+   "e": "White",
+   "m": "White"
+  },
+  "jewel_ground_high": {
+   "g": "64 56 45",
+   "e": "White",
+   "m": "White"
+  },
+  "jewel_ground_low": {
+   "g": "54 49 42",
+   "e": "White",
+   "m": "White"
+  },
+  "jewel_deco": {
+   "b": "199 188 173"
+  },
+  "jewel_magic": {
+   "t": "200 218 236",
+   "b": "200 218 236",
+   "g": "48 58 70",
+   "e": "White",
+   "m": "White"
+  },
+  "jewel_magic_low": {
+   "t": "153 166 180",
+   "b": "153 166 180",
+   "e": "White",
+   "m": "White"
+  },
+  "ground_high": {
+   "g": "54 57 63"
+  },
+  "ground_mid": {
+   "g": "48 50 52"
+  },
+  "ground_weak": {
+   "g": "33 34 34 240"
+  },
+  "ground_weak2": {
+   "g": "63 64 65 190"
+  },
+  "ground_vendor": {
+   "g": "33 34 34 180"
+  },
+  "ground_unremarkable": {
+   "g": "33 34 34 140"
+  },
+  "craft_chance": {
+   "t": "212 216 222",
+   "b": "212 216 222",
+   "g": "55 57 61",
+   "e": "White",
+   "m": "White"
+  },
+  "craft_chance_low": {
+   "b": "202 221 213",
+   "e": "White",
+   "m": "White"
+  },
+  "craft_eco_a": {
+   "t": "240 242 245",
+   "b": "227 212 201",
+   "g": "55 57 61",
+   "e": "White",
+   "m": "White"
+  },
+  "craft_eco_b": {
+   "b": "227 212 201",
+   "g": "33 34 34",
+   "e": "White",
+   "m": "White"
+  },
+  "craft_level82": {
+   "t": "198 188 173"
+  },
+  "craft_toplevel": {
+   "b": "128 121 113"
+  },
+  "salvage_bright": {
+   "b": "186 190 196"
+  },
+  "salvage_dim": {
+   "b": "120 122 127"
+  },
+  "flask_charm": {
+   "b": "154 168 163"
+  },
+  "flask_charm_high": {
+   "b": "198 188 173",
+   "g": "48 60 56"
+  },
+  "flask_endgame": {
+   "b": "198 188 173"
+  },
+  "flask_life": {
+   "b": "219 178 177"
+  },
+  "flask_mana": {
+   "b": "167 193 220"
+  },
+  "gold_huge": {
+   "t": "240 242 245",
+   "b": "225 214 196",
+   "g": "63 56 45",
+   "e": "White",
+   "m": "White"
+  },
+  "gold_large": {
+   "t": "225 214 196",
+   "b": "225 214 196",
+   "e": "White",
+   "m": "White"
+  },
+  "gold_medium": {
+   "t": "198 188 173",
+   "b": "172 163 150",
+   "e": "White"
+  },
+  "gold_small": {
+   "t": "161 165 170",
+   "b": "37 37 38",
+   "g": "53 49 42 180"
+  },
+  "xeno_d": {
+   "t": "212 216 222",
+   "b": "212 216 222",
+   "e": "White",
+   "m": "White"
+  },
+  "unknown_item": {
+   "t": "32 34 37",
+   "b": "198 220 229",
+   "g": "208 212 220",
+   "e": "White",
+   "m": "White"
+  },
+  "deco_remove_normal": {
+   "t": "186 190 196",
+   "b": "37 37 38",
+   "g": "48 50 52 240"
+  },
+  "deco_remove_magic": {
+   "t": "177 192 208",
+   "b": "37 37 38",
+   "g": "48 50 52 240"
+  },
+  "rare_deco": {
+   "b": "33 34 34"
+  },
+  "leveling_currency_rare": {
+   "t": "240 242 245",
+   "b": "240 242 245",
+   "g": "55 57 61",
+   "e": "White",
+   "m": "White"
+  },
+  "leveling_currency_magic": {
+   "t": "211 216 223",
+   "b": "211 216 223",
+   "g": "63 64 65"
+  },
+  "leveling_currency_start": {
+   "t": "161 165 171",
+   "b": "161 165 171"
+  }
+ }
+}

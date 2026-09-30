@@ -1,0 +1,415 @@
+{
+ "name": "Twilight",
+ "author": "LuciferTFFT#1636",
+ "notes": "Deep jewel grounds with luminous accents. Same fill-equals-importance structure as Cotton Candy, but richer and colder - reads well on a dark screen without pastel wash.",
+ "roles": {
+  "apex": {
+   "t": "28 8 46",
+   "b": "255 150 196",
+   "g": "255 214 122",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "currency_a": {
+   "t": "58 9 51",
+   "b": "255 207 229",
+   "g": "255 151 196",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "currency_b": {
+   "t": "37 9 58",
+   "b": "225 205 255",
+   "g": "185 154 255",
+   "e": "Purple",
+   "m": "Purple"
+  },
+  "currency_c": {
+   "t": "23 12 62",
+   "b": "207 225 255",
+   "g": "154 187 255",
+   "e": "Blue",
+   "m": "Blue"
+  },
+  "currency_d": {
+   "t": "5 24 44",
+   "b": "192 255 214",
+   "g": "140 253 178",
+   "e": "Cyan",
+   "m": "Cyan"
+  },
+  "supply_mid": {
+   "t": "167 195 211",
+   "b": "95 131 156",
+   "g": "45 42 72"
+  },
+  "currency_e": {
+   "t": "154 216 255",
+   "b": "154 216 255",
+   "g": "29 17 70",
+   "e": "White",
+   "m": "White"
+  },
+  "supply_low": {
+   "t": "129 141 163"
+  },
+  "fragment_a": {
+   "t": "1 52 27",
+   "b": "255 234 197",
+   "g": "255 202 127",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "fragment_b": {
+   "t": "8 50 28",
+   "b": "255 226 185",
+   "g": "247 195 126",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "fragment_c": {
+   "t": "255 212 154",
+   "b": "255 212 154",
+   "g": "12 63 26",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "fragment_d": {
+   "t": "255 212 154",
+   "b": "190 134 65",
+   "g": "12 63 26"
+  },
+  "fragment_e": {
+   "t": "245 189 142",
+   "b": "144 121 92",
+   "g": "36 28 47"
+  },
+  "unique_t0": {
+   "t": "44 6 6",
+   "b": "255 232 220",
+   "g": "255 122 96",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_a": {
+   "t": "0 53 16",
+   "b": "255 231 211",
+   "g": "255 165 134",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "unique_b": {
+   "t": "255 123 108",
+   "b": "255 123 108",
+   "g": "14 60 23",
+   "e": "Brown",
+   "m": "Brown"
+  },
+  "unique_c": {
+   "t": "218 128 116",
+   "b": "135 82 73",
+   "g": "21 53 28",
+   "e": "Brown",
+   "m": "Brown"
+  },
+  "unique_exceptional": {
+   "t": "255 240 186",
+   "b": "126 246 202",
+   "g": "66 18 104",
+   "e": "Purple",
+   "m": "Purple"
+  },
+  "unique_special": {
+   "t": "37 9 58",
+   "b": "218 207 255",
+   "g": "174 160 255",
+   "e": "Blue",
+   "m": "Blue"
+  },
+  "unique_boss": {
+   "t": "37 9 58",
+   "b": "250 204 255",
+   "g": "249 147 254",
+   "e": "Purple",
+   "m": "Purple"
+  },
+  "exotic_high": {
+   "t": "139 255 181",
+   "b": "139 255 181",
+   "g": "11 25 63",
+   "e": "Green",
+   "m": "Green"
+  },
+  "exotic_low": {
+   "t": "123 219 140",
+   "b": "123 219 140",
+   "e": "Green"
+  },
+  "exotic_mod": {
+   "t": "139 255 181",
+   "b": "139 255 181",
+   "g": "42 15 68",
+   "e": "Green",
+   "m": "Green"
+  },
+  "artifact_high": {
+   "t": "255 151 153",
+   "b": "255 151 153",
+   "g": "62 13 54",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "artifact": {
+   "t": "255 151 153",
+   "b": "255 151 153",
+   "g": "50 24 44",
+   "e": "Orange",
+   "m": "Orange"
+  },
+  "corrupt": {
+   "b": "190 65 88 240"
+  },
+  "corrupt_high": {
+   "b": "255 134 149"
+  },
+  "gem_high": {
+   "t": "137 255 244",
+   "b": "137 255 244",
+   "g": "7 6 68",
+   "e": "Cyan",
+   "m": "Cyan"
+  },
+  "gem_low": {
+   "t": "109 229 227",
+   "b": "109 229 227",
+   "e": "Cyan"
+  },
+  "quest": {
+   "t": "173 255 141",
+   "e": "Green",
+   "m": "Green"
+  },
+  "map_top": {
+   "t": "58 9 51",
+   "b": "255 207 229",
+   "g": "255 151 196",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "map_high": {
+   "t": "255 212 154",
+   "b": "255 212 154",
+   "g": "12 62 40",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "map_mid": {
+   "t": "251 228 217",
+   "e": "White",
+   "m": "White"
+  },
+  "map_low": {
+   "t": "179 178 204",
+   "e": "White",
+   "m": "White"
+  },
+  "map_special_high": {
+   "t": "37 9 58",
+   "b": "250 204 255",
+   "g": "249 147 254",
+   "e": "Purple",
+   "m": "Purple"
+  },
+  "map_special_low": {
+   "t": "246 154 253",
+   "b": "246 154 253",
+   "e": "Purple",
+   "m": "Purple"
+  },
+  "deco_bright": {
+   "b": "251 228 217"
+  },
+  "deco_dim": {
+   "b": "179 178 204"
+  },
+  "deco_upgrade": {
+   "b": "255 135 134"
+  },
+  "jewel_tiered": {
+   "t": "255 212 154",
+   "b": "255 212 154",
+   "g": "12 62 40",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "jewel_ground_high": {
+   "g": "9 46 29",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "jewel_ground_low": {
+   "g": "11 28 20",
+   "e": "Yellow",
+   "m": "White"
+  },
+  "jewel_deco": {
+   "b": "248 196 105"
+  },
+  "jewel_magic": {
+   "t": "154 216 255",
+   "b": "154 216 255",
+   "g": "29 17 70",
+   "e": "Blue",
+   "m": "Blue"
+  },
+  "jewel_magic_low": {
+   "t": "125 198 255",
+   "b": "125 198 255",
+   "e": "Blue",
+   "m": "Blue"
+  },
+  "ground_high": {
+   "g": "42 15 68"
+  },
+  "ground_mid": {
+   "g": "27 21 33"
+  },
+  "ground_weak": {
+   "g": "32 25 41 240"
+  },
+  "ground_weak2": {
+   "g": "51 43 64 190"
+  },
+  "ground_vendor": {
+   "g": "25 20 31 180"
+  },
+  "ground_unremarkable": {
+   "g": "25 20 31 140"
+  },
+  "craft_chance": {
+   "t": "255 151 196",
+   "b": "255 151 196",
+   "g": "62 13 54",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "craft_chance_low": {
+   "b": "139 255 181",
+   "e": "Green",
+   "m": "Green"
+  },
+  "craft_eco_a": {
+   "t": "251 228 217",
+   "b": "255 151 153",
+   "g": "62 13 54",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "craft_eco_b": {
+   "b": "255 151 153",
+   "g": "22 17 27",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "craft_level82": {
+   "t": "255 187 129"
+  },
+  "craft_toplevel": {
+   "b": "195 133 74"
+  },
+  "salvage_bright": {
+   "b": "169 168 195"
+  },
+  "salvage_dim": {
+   "b": "108 109 145"
+  },
+  "flask_charm": {
+   "b": "123 219 140"
+  },
+  "flask_charm_high": {
+   "b": "255 187 129",
+   "g": "11 30 46"
+  },
+  "gold_huge": {
+   "t": "251 228 217",
+   "b": "255 212 154",
+   "g": "12 62 40",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "gold_large": {
+   "t": "255 212 154",
+   "b": "255 212 154",
+   "e": "Yellow",
+   "m": "Yellow"
+  },
+  "gold_medium": {
+   "t": "255 214 158",
+   "b": "231 184 120",
+   "e": "Yellow"
+  },
+  "gold_small": {
+   "t": "182 164 156",
+   "b": "36 29 43",
+   "g": "28 47 36 180"
+  },
+  "xeno_d": {
+   "t": "158 189 255",
+   "b": "158 189 255",
+   "e": "Cyan",
+   "m": "Cyan"
+  },
+  "unknown_item": {
+   "t": "37 9 58",
+   "b": "137 255 244",
+   "g": "249 147 254",
+   "e": "Pink",
+   "m": "Pink"
+  },
+  "deco_remove_normal": {
+   "t": "179 178 204",
+   "b": "29 23 35",
+   "g": "36 29 45 240"
+  },
+  "deco_remove_magic": {
+   "t": "152 176 255",
+   "b": "29 23 35",
+   "g": "36 29 45 240"
+  },
+  "rare_deco": {
+   "b": "29 23 35"
+  },
+  "flask_endgame": {
+   "b": "255 187 129"
+  },
+  "flask_life": {
+   "b": "255 141 176"
+  },
+  "flask_mana": {
+   "b": "141 194 255"
+  },
+  "leveling_currency_rare": {
+   "t": "251 228 217",
+   "b": "251 228 217",
+   "g": "29 17 70",
+   "e": "White",
+   "m": "White"
+  },
+  "leveling_currency_magic": {
+   "t": "208 229 245",
+   "b": "208 229 245",
+   "g": "29 26 48"
+  },
+  "leveling_currency_start": {
+   "t": "124 185 212",
+   "b": "124 185 212"
+  },
+  "supply_variant": {
+   "t": "121 229 162",
+   "b": "121 229 162",
+   "g": "24 37 57",
+   "e": "Cyan",
+   "m": "Cyan"
+  }
+ }
+}

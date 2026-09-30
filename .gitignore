@@ -1,0 +1,8 @@
+# Local notes
+/archive/
+
+# Filters and editor clutter
+*.filter
+__pycache__/
+.DS_Store
+Thumbs.db

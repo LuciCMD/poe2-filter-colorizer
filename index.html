@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PoE 2 Filter Themer</title>
+<meta name="description" content="Recolour a NeverSink Path of Exile 2 loot filter with a theme, in your browser. Which items show and hide is never touched.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231F2027'/%3E%3Crect x='6' y='10' width='20' height='12' rx='3' fill='%23B39DF0'/%3E%3C/svg%3E">
+<style>
+:root{
+  --abyss:#1A1B21; --ground:#1F2027; --surface:#2A2B33; --raised:#31323B; --field:#3A3B46;
+  --line:#474855; --line-soft:#34353F;
+  --ink:#E4E4E8; --muted:#A4A5AF; --faint:#7E7F8A; --on-accent:#1F1B2B;
+  --accent:#B39DF0; --accent-dim:#7D6AB5;
+  --good:#6CC77A; --warn:#F5A742; --bad:#EF6B67;
+  --hover-wash:rgba(255,255,255,.06); --press-wash:rgba(255,255,255,.12); --accent-wash:rgba(179,157,240,.16);
+  --tip:#4A4B57; --track-off:#5C5D69; --knob-off:#C9C9D0;
+  --font-ui:Roboto,"Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,"Courier New",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;border:2px solid transparent;background-clip:padding-box}
+::selection{background:var(--accent-dim);color:var(--ink)}
+body{margin:0;background:var(--ground);color:var(--muted);font:13px/1.5 var(--font-ui)}
+a{color:var(--accent)}
+code{font-family:var(--font-mono);font-size:12px;color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.page{max-width:1180px;margin:0 auto;padding:24px 28px 32px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 32px;
+       padding-bottom:20px;border-bottom:1px solid var(--line-soft);margin-bottom:20px}
+h1{font-size:24px;font-weight:400;color:var(--ink);margin:0 0 4px}
+.lede{margin:0;max-width:64ch;font-size:13.5px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;padding:8px 14px;min-width:120px}
+.stat b{display:block;font:400 20px var(--font-ui);color:var(--ink);font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;font-weight:500;color:var(--faint)}
+
+.cols{display:grid;grid-template-columns:420px minmax(0,1fr);gap:12px;align-items:start}
+@media(max-width:940px){.cols{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+h2{font-size:17px;font-weight:400;color:var(--ink);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.hint{font-size:12px;color:var(--faint);margin:0 0 12px}
+
+/* drop zone */
+#drop{position:relative;border:1.5px dashed var(--line);border-radius:8px;background:var(--abyss);
+      text-align:center;padding:24px 16px;cursor:pointer}
+#drop::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+#drop:hover::after,#drop.over::after{background:var(--hover-wash)}
+#drop.over{border-color:var(--accent)}
+#drop.has{border-style:solid;border-color:var(--line-soft);text-align:left}
+#drop b{display:block;color:var(--ink);font-weight:500;font-size:13.5px;overflow-wrap:anywhere}
+#drop span{font-size:12px;color:var(--faint)}
+
+/* theme picker */
+.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{position:relative;display:block;background:var(--raised);border-radius:8px;padding:9px 11px 10px;
+      cursor:pointer;border:1px solid transparent}
+.tile input{position:absolute;opacity:0;pointer-events:none}
+.tile::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+.tile:hover::after{background:var(--hover-wash)}
+.tile:active::after{background:var(--press-wash)}
+.tile:has(input:checked){background:var(--accent-wash);border-color:var(--accent-dim)}
+.tile:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:1px}
+.tile .nm{display:block;color:var(--ink);font-size:13.5px;margin-bottom:7px}
+.tile:has(input:checked) .nm{color:var(--accent);font-weight:500}
+.sw{display:flex;gap:4px}
+.sw i{flex:1;height:14px;border-radius:3px;border:1px solid transparent}
+#tnote{font-size:12.5px;color:var(--muted);margin:10px 0 0;min-height:38px}
+
+/* buttons */
+button{position:relative;background:var(--field);color:var(--ink);border:0;border-radius:8px;
+       padding:9px 16px;font:500 13px var(--font-ui);cursor:pointer}
+button::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
+button:hover::after{background:var(--hover-wash)}
+button:active::after{background:var(--press-wash)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+button.primary{background:var(--accent);color:var(--on-accent);width:100%;padding:11px 16px;margin-top:4px}
+button:disabled{opacity:.4;cursor:default}
+button:disabled::after{background:none}
+.row-btn{display:flex;align-items:center;gap:8px;margin-top:12px}
+
+/* toggles */
+.opt{display:flex;align-items:center;gap:8px;margin:0 0 14px}
+.toggle{display:inline-flex;align-items:center;gap:12px;color:var(--ink);font-size:13.5px;cursor:pointer}
+.toggle input{appearance:none;width:38px;height:22px;margin:0;position:relative;cursor:pointer;flex:none}
+.toggle input::before{content:"";position:absolute;left:0;right:0;top:4px;height:14px;border-radius:7px;background:var(--track-off)}
+.toggle input::after{content:"";position:absolute;top:1px;left:0;width:20px;height:20px;border-radius:50%;
+                     background:var(--knob-off);transition:left .12s}
+.toggle input:checked::before{background:var(--accent-dim)}
+.toggle input:checked::after{left:18px;background:var(--accent)}
+.toggle:hover input::after{box-shadow:0 0 0 3px var(--hover-wash)}
+.toggle input:focus-visible{outline:none}
+.toggle input:focus-visible::after{box-shadow:0 0 0 4px var(--accent-wash)}
+
+/* info icon and its description */
+.info{display:inline-flex;width:16px;height:16px;color:var(--faint);cursor:help;flex:none;border-radius:50%}
+.info:hover,.info:focus-visible{color:var(--accent)}
+.info svg{width:16px;height:16px}
+#tip{position:fixed;z-index:10;max-width:300px;width:max-content;background:var(--tip);color:var(--ink);
+     border-radius:6px;padding:6px 10px;font-size:12px;line-height:1.45;pointer-events:none;display:none}
+
+/* report */
+#report{font-family:var(--font-mono);font-size:12px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;
+        color:var(--muted);margin:0;background:var(--abyss);border-radius:6px;padding:10px 12px}
+.ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+/* preview */
+.grp{margin-bottom:18px}
+.grp:last-child{margin-bottom:0}
+.grp h3{font-size:11px;font-weight:500;color:var(--faint);margin:0 0 6px}
+.rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px}
+.drop-row{display:flex;align-items:center;gap:10px;background:var(--abyss);border-radius:6px;padding:7px 10px;min-width:0}
+.drop-lbl{display:inline-block;border:1px solid;padding:1px 8px;line-height:1.3;font-family:"Fontin SmallCaps",var(--font-ui);
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rname{font-size:11px;color:var(--faint);margin-left:auto;white-space:nowrap;flex:none}
+
+/* how it works */
+.about p{margin:0 0 10px;max-width:78ch}
+.about p:last-child{margin-bottom:0}
+footer{color:var(--faint);font-size:12px;padding-top:8px;display:flex;flex-wrap:wrap;gap:6px 18px}
+
+@media(max-width:520px){
+  .page{padding:16px 16px 24px}
+  .stats{width:100%}
+  .stat{flex:1;min-width:0}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <div>
+    <h1>PoE 2 Filter Themer</h1>
+    <p class="lede">Drop in a NeverSink filter, pick a theme, and get it back recoloured. Your filter
+    never leaves your computer, and which items show or hide is never touched.</p>
+  </div>
+  <div class="stats" id="stats" hidden>
+    <div class="stat"><b id="s_filters">&ndash;</b><span>Filters Themed</span></div>
+    <div class="stat"><b id="s_people">&ndash;</b><span>Players</span></div>
+  </div>
+</header>
+
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2>Your Filter</h2>
+      <div id="drop" tabindex="0" role="button" aria-label="Choose or drop a .filter file">
+        <b id="fname">Drop a .filter here</b><span id="fsub">or click to choose one</span>
+      </div>
+      <input id="file" type="file" accept=".filter,text/plain" hidden>
+    </div>
+
+    <div class="card">
+      <h2>Theme</h2>
+      <div class="themes" id="themes" role="radiogroup" aria-label="Theme"></div>
+      <p id="tnote"></p>
+      <div class="row-btn">
+        <button id="loadtheme" type="button">Load Theme File</button>
+        <span class="info" tabindex="0" data-tip="Adds a theme from a .json file, such as one you made or were sent. It lasts until you close the page."></span>
+      </div>
+      <input id="tfile" type="file" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="card">
+      <h2>Options</h2>
+      <div class="opt">
+        <label class="toggle"><input type="checkbox" role="switch" id="o_t0" checked>Give Top-Tier Uniques Their Own Colour</label>
+        <span class="info" tabindex="0" data-tip="NeverSink styles chase uniques exactly like Divine Orbs, so the two look the same. This retags that one rule so the theme can colour them apart."></span>
+      </div>
+      <div class="opt">
+        <label class="toggle"><input type="checkbox" role="switch" id="o_split" checked>Split Transmutation from Alchemy</label>
+        <span class="info" tabindex="0" data-tip="They share one rule, so no theme can colour them apart. This splits it so plain Transmutation and Whetstones are quieter; every part still shows."></span>
+      </div>
+      <button class="primary" id="go" disabled>Apply Theme &amp; Download</button>
+    </div>
+
+    <div class="card">
+      <h2>What Changed</h2>
+      <p id="report">Waiting for a filter&hellip;</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Live Preview</h2>
+      <p class="hint">Every tier as it will look on the ground. Pick another theme to compare.</p>
+      <div id="preview"></div>
+    </div>
+
+    <div class="card about">
+      <h2>How It Works</h2>
+      <p>Every rule in a NeverSink filter ends its comment with a style class, such as
+      <code>!currency_a</code> or <code>!uniques_b</code>. The themer looks that class up in the theme and
+      rewrites only the colour lines the rule already has: text, border, background, light beam and
+      minimap icon colour.</p>
+      <p>It never adds, removes or reorders a condition, so the items you see are exactly the ones your
+      FilterBlade settings chose. After every conversion it compares the items shown and hidden before
+      and after, and warns you if anything moved. Minimap icon shapes and sizes, and temporary beams,
+      are kept from your file.</p>
+      <p>A style class the theme doesn't know, for example from a new league, is left at its original
+      colour and listed in the report.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Works with NeverSink's PoE 2 filters from FilterBlade.</span>
+  <a href="https://github.com/LuciCMD/poe2-filter-colorizer">Source and Theme Guide on GitHub</a>
+  <span id="privacy">When you download, the page adds one to a public counter. Nothing about you or your filter is sent.</span>
+</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script id="data" type="application/json">{"roles":{"rolemap":{"apex_stier":"apex","currency_a":"currency_a","currency_b":"currency_b","currency_c":"currency_c","currency_d":"currency_d","currency_dlow":"supply_mid","currency_e":"currency_e","currency_supply2":"supply_mid","currency_supply4":"supply_low","fragments_a":"fragment_a","fragments_b":"fragment_b","fragments_c":"fragment_c","fragments_d":"fragment_d","fragments_e":"fragment_e","fragments_fragdmuted":"fragment_d","fragments_splinter1":"fragment_a","fragments_splinter2":"fragment_b","fragments_splinter3":"fragment_c","fragments_splinter4":"fragment_d","fragments_splinter5":"fragment_e","uniques_t0":"unique_t0","uniques_a":"unique_a","uniques_b":"unique_b","uniques_c":"unique_c","uniques_exceptional":"unique_exceptional","uniques_x":"unique_special","uniques_xbossdrop":"unique_boss","exotics_btier":"exotic_high","exotics_ctier":"exotic_high","exotics_dtier":"exotic_low","exotics_identifiedmod":"exotic_mod","exotics_artifacthigh":"artifact_high","exotics_artifact":"artifact","exotics_corrupt":"corrupt","exotics_corrupthigh":"corrupt_high","typebased_gems1":"gem_high","typebased_gems2":"gem_high","typebased_gems3":"gem_low","typebased_quest":"quest","maps_regularhighest":"map_top","maps_regularhigh":"map_high","maps_regularmid":"map_mid","maps_regularlow":"map_low","maps_specialb":"map_special_high","maps_specialc":"map_special_low","maps_deco1":"deco_bright","maps_deco2":"deco_bright","maps_deco3":"deco_dim","maps_deco4":"deco_dim","maps_decooverlevel":"deco_dim","maps_decotierupgrade":"deco_upgrade","gear_tieredjewellery":"jewel_tiered","gear_jewelrare":"jewel_tiered","gear_jewellery1":"jewel_ground_high","gear_jewellery2":"jewel_ground_low","gear_decojewellery":"jewel_deco","gear_jewelmagic":"jewel_magic","gear_jewelmagiclow":"jewel_magic_low","gear_highlightdrop2":"ground_high","gear_highlightdrop3":"ground_high","gear_highlightedsize":"ground_mid","gear_weakrare1":"ground_weak","gear_weakrareleveling1":"ground_weak","gear_weakrare2":"ground_weak2","gear_vendor":"ground_vendor","utility_unremarkabledrop":"ground_unremarkable","itemproperty_achancing":"craft_chance","itemproperty_bchancing":"craft_chance_low","itemproperty_aecocraft":"craft_eco_a","itemproperty_becocraft":"craft_eco_b","itemproperty_level82":"craft_level82","itemproperty_toplevelbased1":"craft_toplevel","itemproperty_salvage1":"salvage_bright","itemproperty_salvagelvl1":"salvage_bright","itemproperty_salvage2":"salvage_dim","typebased_flaskcharms":"flask_charm","typebased_flaskcharms1high":"flask_charm_high","gold_pilehuge":"gold_huge","gold_pilelarge":"gold_large","gold_pilemedium":"gold_medium","gold_pilesmall":"gold_small","xeno_a":"currency_a","xeno_b":"currency_b","xeno_c":"currency_c","xeno_d":"xeno_d","xeno_e":"supply_low","utility_unknownitem":"unknown_item","utility_decoremovernormal":"deco_remove_normal","utility_decoremovermagic":"deco_remove_magic","utility_basicraredecorator":"rare_deco","currency_dvariant":"supply_variant"},"noColour":["gear_unstyled","utility_highlight3","utility_highlight4","utility_minimize"],"noClass":[["\\$type->endgame->flasks","flask_endgame"],["\\$type->leveling->flasks->life","flask_life"],["\\$type->leveling->flasks->mana","flask_mana"],["\\$type->currency->leveling \\$tier->rare","leveling_currency_rare"],["\\$type->currency->leveling \\$tier->magic","leveling_currency_magic"],["\\$type->currency->leveling \\$tier->wisdomstart","leveling_currency_start"]],"roleInfo":{"apex":["Apex","Divine Orb","Currency"],"currency_a":["Currency A","Orb of Chance","Currency"],"currency_b":["Currency B","Chaos Orb","Currency"],"currency_c":["Currency C","Exalted Orb","Currency"],"currency_d":["Currency D","Orb of Alchemy","Currency"],"currency_e":["Currency E","Lesser Jeweller's Orb","Currency"],"supply_mid":["Vendor Supplies","Orb of Transmutation","Currency"],"supply_low":["Supplies, Low","Scroll of Wisdom","Currency"],"fragment_a":["Fragment A","Breachstone","Fragments"],"fragment_b":["Fragment B","Simulacrum Splinter","Fragments"],"fragment_c":["Fragment C","Breach Splinter","Fragments"],"fragment_d":["Fragment D","Timeless Splinter","Fragments"],"fragment_e":["Fragment E","Splinter","Fragments"],"unique_t0":["Unique T0 / Chase","Unique Item","Uniques"],"unique_a":["Unique T2","Unique Item","Uniques"],"unique_b":["Unique T3","Unique Item","Uniques"],"unique_c":["Unique, Low","Unique Item","Uniques"],"unique_exceptional":["Unique, Exceptional","Corrupted Unique","Uniques"],"unique_special":["Unique, Special Base","Unique Item","Uniques"],"unique_boss":["Unique, Boss Drop","Unique Item","Uniques"],"exotic_high":["Exotic Base","Breach Ring","Exotics"],"exotic_low":["Exotic Base, Low","Breach Ring","Exotics"],"exotic_mod":["Exotic Mod","Recombinator Base","Exotics"],"artifact_high":["Artifact, High","Expert Dualstring Bow","Exotics"],"artifact":["Artifact","Fishing Rod","Exotics"],"corrupt":["Corrupted Marker","Corrupted Base","Exotics"],"corrupt_high":["Corrupted, High","Corrupted Base","Exotics"],"gem_high":["Gem","Uncut Skill Gem","Gems"],"gem_low":["Gem, Low","Uncut Support Gem","Gems"],"quest":["Quest Item","Quest Item","Gems"],"map_top":["Waystone T16","Waystone (Tier 16)","Waystones"],"map_high":["Waystone, High","Waystone (Tier 14)","Waystones"],"map_mid":["Waystone, Mid","Waystone (Tier 9)","Waystones"],"map_low":["Waystone, Low","Waystone (Tier 3)","Waystones"],"map_special_high":["Map-Like, High","Expedition Logbook","Waystones"],"map_special_low":["Map-Like","Trial Coins","Waystones"],"deco_bright":["Waystone Deco","Waystone (Tier 15)","Waystones"],"deco_dim":["Waystone Deco, Dim","Waystone (Tier 10)","Waystones"],"deco_upgrade":["Waystone Upgrade","Waystone (Tier 16)","Waystones"],"jewel_tiered":["Jewellery, Tiered","Stellar Amulet","Gear"],"jewel_ground_high":["Jewellery Ground","Sapphire Ring","Gear"],"jewel_ground_low":["Jewellery Ground, Low","Gold Amulet","Gear"],"jewel_deco":["Jewellery Deco","Amber Amulet","Gear"],"jewel_magic":["Jewel, Magic","Breach Ring","Gear"],"jewel_magic_low":["Jewel, Magic Low","Breach Ring","Gear"],"ground_high":["Gear Ground, High","Sapphire Ring","Gear"],"ground_mid":["Gear Ground","Stellar Amulet","Gear"],"ground_weak":["Weak Rare","Rusted Sallet","Gear"],"ground_weak2":["Weak Rare, Alt","Hardwood Buckler","Gear"],"ground_vendor":["Vendor Trash","Iron Greaves","Gear"],"ground_unremarkable":["Unremarkable","Leather Belt","Gear"],"craft_chance":["Chancing Base","Sapphire Ring","Crafting"],"craft_chance_low":["Chancing Base, Low","Silver Charm","Crafting"],"craft_eco_a":["Economy Craft A","Expert Dualstring Bow","Crafting"],"craft_eco_b":["Economy Craft B","Expert Laced Boots","Crafting"],"craft_level82":["Item Level 82+","Furtive Wraps","Crafting"],"craft_toplevel":["Top Base Level","Omen Sceptre","Crafting"],"salvage_bright":["Salvageable","Advanced Vaal Cuirass","Crafting"],"salvage_dim":["Salvageable, Dim","Studded Vest","Crafting"],"flask_charm":["Charm","Ruby Charm","Flasks"],"flask_charm_high":["Charm, High","Golden Charm","Flasks"],"flask_endgame":["Flask, Endgame","Ultimate Life Flask","Flasks"],"flask_life":["Life Flask","Greater Life Flask","Flasks"],"flask_mana":["Mana Flask","Greater Mana Flask","Flasks"],"gold_huge":["Gold, Huge Pile","Gold","Gold"],"gold_large":["Gold, Large","Gold","Gold"],"gold_medium":["Gold, Medium","Gold","Gold"],"gold_small":["Gold, Small","Gold","Gold"],"xeno_d":["New League D","Unknown Item","New League"],"unknown_item":["Unrecognised Item","Unrecognised Item","New League"],"deco_remove_normal":["Deco Remover","Iron Ring","Utility"],"deco_remove_magic":["Deco Remover, Magic","Lazuli Ring","Utility"],"rare_deco":["Rare Outline","Rare Item","Utility"],"leveling_currency_rare":["Levelling Currency","Orb of Alchemy","Levelling"],"leveling_currency_magic":["Levelling Currency, Magic","Orb of Transmutation","Levelling"],"leveling_currency_start":["Levelling Currency, Start","Scroll of Wisdom","Levelling"],"supply_variant":["Utility Variant","Greater Orb of Transmutation","Currency"]}},"themes":[{"name":"Cotton Candy","author":"LuciferTFFT#1636","notes":"Pastel. Fill = importance: filled plate with dark text means stop for this; pastel text on a dark ground means keep moving. Uniques stay orange-red so they never read as rare-yellow.","roles":{"apex":{"t":"44 16 62","b":"255 176 208","g":"255 232 168","e":"Pink","m":"Pink"},"currency_a":{"t":"58 18 36","b":"255 226 234","g":"255 168 190","e":"Pink","m":"Pink"},"currency_b":{"t":"40 18 58","b":"242 224 255","g":"212 176 250","e":"Purple","m":"Purple"},"currency_c":{"t":"22 26 62","b":"226 232 255","g":"178 188 248","e":"Blue","m":"Blue"},"currency_d":{"t":"12 44 32","b":"216 250 234","g":"172 238 206","e":"Cyan","m":"Cyan"},"supply_mid":{"t":"186 196 208","b":"116 128 146","g":"56 62 74"},"currency_e":{"t":"176 208 250","b":"176 208 250","g":"28 32 70","e":"White","m":"White"},"supply_low":{"t":"146 148 158"},"fragment_a":{"t":"52 42 8","b":"255 248 216","g":"250 226 148","e":"Pink","m":"Pink"},"fragment_b":{"t":"50 40 16","b":"250 240 208","g":"230 212 158","e":"Orange","m":"Orange"},"fragment_c":{"t":"250 232 176","b":"250 232 176","g":"63 36 22","e":"Yellow","m":"Yellow"},"fragment_d":{"t":"250 232 176","b":"170 150 96","g":"63 36 22"},"fragment_e":{"t":"232 210 172","b":"140 126 96","g":"40 37 48"},"unique_t0":{"t":"56 12 10","b":"255 240 232","g":"255 150 128","e":"Orange","m":"Orange"},"unique_a":{"t":"56 26 4","b":"255 246 230","g":"255 196 150","e":"Orange","m":"Orange"},"unique_b":{"t":"238 168 140","b":"238 168 140","g":"60 32 24","e":"Brown","m":"Brown"},"unique_c":{"t":"198 150 130","b":"130 92 78","g":"54 37 30","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"255 244 206","b":"170 240 208","g":"74 30 100","e":"Purple","m":"Purple"},"unique_special":{"t":"40 18 58","b":"238 226 255","g":"206 186 246","e":"Blue","m":"Blue"},"unique_boss":{"t":"40 18 58","b":"252 226 250","g":"240 178 232","e":"Purple","m":"Purple"},"exotic_high":{"t":"170 240 208","b":"170 240 208","g":"21 63 63","e":"Green","m":"Green"},"exotic_low":{"t":"150 206 170","b":"150 206 170","e":"Green"},"exotic_mod":{"t":"170 240 208","b":"170 240 208","g":"44 26 68","e":"Green","m":"Green"},"artifact_high":{"t":"255 182 168","b":"255 182 168","g":"62 23 39","e":"Orange","m":"Orange"},"artifact":{"t":"255 182 168","b":"255 182 168","g":"51 33 38","e":"Orange","m":"Orange"},"corrupt":{"b":"170 96 96 240"},"corrupt_high":{"b":"255 156 150"},"gem_high":{"t":"168 234 240","b":"168 234 240","g":"16 40 68","e":"Cyan","m":"Cyan"},"gem_low":{"t":"140 200 212","b":"140 200 212","e":"Cyan"},"quest":{"t":"176 244 168","e":"Green","m":"Green"},"map_top":{"t":"58 18 36","b":"255 226 234","g":"255 168 190","e":"Pink","m":"Pink"},"map_high":{"t":"250 232 176","b":"250 232 176","g":"62 57 22","e":"Yellow","m":"Yellow"},"map_mid":{"t":"250 244 238","e":"White","m":"White"},"map_low":{"t":"196 194 204","e":"White","m":"White"},"map_special_high":{"t":"40 18 58","b":"252 226 250","g":"240 178 232","e":"Purple","m":"Purple"},"map_special_low":{"t":"240 184 234","b":"240 184 234","e":"Purple","m":"Purple"},"deco_bright":{"b":"250 244 238"},"deco_dim":{"b":"196 194 204"},"deco_upgrade":{"b":"255 170 150"},"jewel_tiered":{"t":"250 232 176","b":"250 232 176","g":"62 57 22","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"46 42 16","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"28 26 16","e":"Yellow","m":"White"},"jewel_deco":{"b":"228 212 140"},"jewel_magic":{"t":"176 208 250","b":"176 208 250","g":"28 32 70","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"156 188 240","b":"156 188 240","e":"Blue","m":"Blue"},"ground_high":{"g":"44 26 68"},"ground_mid":{"g":"30 28 34"},"ground_weak":{"g":"36 33 42 240"},"ground_weak2":{"g":"58 56 66 190"},"ground_vendor":{"g":"28 26 32 180"},"ground_unremarkable":{"g":"28 26 32 140"},"craft_chance":{"t":"255 168 190","b":"255 168 190","g":"62 23 39","e":"Pink","m":"Pink"},"craft_chance_low":{"b":"170 240 208","e":"Green","m":"Green"},"craft_eco_a":{"t":"250 244 238","b":"255 182 168","g":"62 23 39","e":"Pink","m":"Pink"},"craft_eco_b":{"b":"255 182 168","g":"24 22 28","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"250 214 150"},"craft_toplevel":{"b":"176 152 104"},"salvage_bright":{"b":"186 184 194"},"salvage_dim":{"b":"128 126 138"},"flask_charm":{"b":"150 206 170"},"flask_charm_high":{"b":"250 214 150","g":"18 46 32"},"gold_huge":{"t":"250 244 238","b":"250 232 176","g":"62 57 22","e":"Yellow","m":"Yellow"},"gold_large":{"t":"250 232 176","b":"250 232 176","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"244 230 186","b":"216 200 150","e":"Yellow"},"gold_small":{"t":"180 176 172","b":"40 38 44","g":"48 44 37 180"},"xeno_d":{"t":"180 190 250","b":"180 190 250","e":"Cyan","m":"Cyan"},"unknown_item":{"t":"40 18 58","b":"168 234 240","g":"240 178 232","e":"Pink","m":"Pink"},"deco_remove_normal":{"t":"196 194 204","b":"32 30 36","g":"40 38 46 240"},"deco_remove_magic":{"t":"172 176 252","b":"32 30 36","g":"40 38 46 240"},"rare_deco":{"b":"32 30 36"},"flask_endgame":{"b":"250 214 150"},"flask_life":{"b":"244 168 178"},"flask_mana":{"b":"168 190 244"},"leveling_currency_rare":{"t":"250 244 238","b":"250 244 238","g":"28 32 70","e":"White","m":"White"},"leveling_currency_magic":{"t":"228 234 244","b":"228 234 244","g":"35 39 49"},"leveling_currency_start":{"t":"150 176 200","b":"150 176 200"},"supply_variant":{"t":"150 214 186","b":"150 214 186","g":"34 58 52","e":"Cyan","m":"Cyan"}}},{"name":"Twilight","author":"LuciferTFFT#1636","notes":"Deep jewel grounds with luminous accents. Same fill-equals-importance structure as Cotton Candy, but richer and colder - reads well on a dark screen without pastel wash.","roles":{"apex":{"t":"28 8 46","b":"255 150 196","g":"255 214 122","e":"Pink","m":"Pink"},"currency_a":{"t":"58 9 51","b":"255 207 229","g":"255 151 196","e":"Pink","m":"Pink"},"currency_b":{"t":"37 9 58","b":"225 205 255","g":"185 154 255","e":"Purple","m":"Purple"},"currency_c":{"t":"23 12 62","b":"207 225 255","g":"154 187 255","e":"Blue","m":"Blue"},"currency_d":{"t":"5 24 44","b":"192 255 214","g":"140 253 178","e":"Cyan","m":"Cyan"},"supply_mid":{"t":"167 195 211","b":"95 131 156","g":"45 42 72"},"currency_e":{"t":"154 216 255","b":"154 216 255","g":"29 17 70","e":"White","m":"White"},"supply_low":{"t":"129 141 163"},"fragment_a":{"t":"1 52 27","b":"255 234 197","g":"255 202 127","e":"Pink","m":"Pink"},"fragment_b":{"t":"8 50 28","b":"255 226 185","g":"247 195 126","e":"Orange","m":"Orange"},"fragment_c":{"t":"255 212 154","b":"255 212 154","g":"12 63 26","e":"Yellow","m":"Yellow"},"fragment_d":{"t":"255 212 154","b":"190 134 65","g":"12 63 26"},"fragment_e":{"t":"245 189 142","b":"144 121 92","g":"36 28 47"},"unique_t0":{"t":"44 6 6","b":"255 232 220","g":"255 122 96","e":"Orange","m":"Orange"},"unique_a":{"t":"0 53 16","b":"255 231 211","g":"255 165 134","e":"Orange","m":"Orange"},"unique_b":{"t":"255 123 108","b":"255 123 108","g":"14 60 23","e":"Brown","m":"Brown"},"unique_c":{"t":"218 128 116","b":"135 82 73","g":"21 53 28","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"255 240 186","b":"126 246 202","g":"66 18 104","e":"Purple","m":"Purple"},"unique_special":{"t":"37 9 58","b":"218 207 255","g":"174 160 255","e":"Blue","m":"Blue"},"unique_boss":{"t":"37 9 58","b":"250 204 255","g":"249 147 254","e":"Purple","m":"Purple"},"exotic_high":{"t":"139 255 181","b":"139 255 181","g":"11 25 63","e":"Green","m":"Green"},"exotic_low":{"t":"123 219 140","b":"123 219 140","e":"Green"},"exotic_mod":{"t":"139 255 181","b":"139 255 181","g":"42 15 68","e":"Green","m":"Green"},"artifact_high":{"t":"255 151 153","b":"255 151 153","g":"62 13 54","e":"Orange","m":"Orange"},"artifact":{"t":"255 151 153","b":"255 151 153","g":"50 24 44","e":"Orange","m":"Orange"},"corrupt":{"b":"190 65 88 240"},"corrupt_high":{"b":"255 134 149"},"gem_high":{"t":"137 255 244","b":"137 255 244","g":"7 6 68","e":"Cyan","m":"Cyan"},"gem_low":{"t":"109 229 227","b":"109 229 227","e":"Cyan"},"quest":{"t":"173 255 141","e":"Green","m":"Green"},"map_top":{"t":"58 9 51","b":"255 207 229","g":"255 151 196","e":"Pink","m":"Pink"},"map_high":{"t":"255 212 154","b":"255 212 154","g":"12 62 40","e":"Yellow","m":"Yellow"},"map_mid":{"t":"251 228 217","e":"White","m":"White"},"map_low":{"t":"179 178 204","e":"White","m":"White"},"map_special_high":{"t":"37 9 58","b":"250 204 255","g":"249 147 254","e":"Purple","m":"Purple"},"map_special_low":{"t":"246 154 253","b":"246 154 253","e":"Purple","m":"Purple"},"deco_bright":{"b":"251 228 217"},"deco_dim":{"b":"179 178 204"},"deco_upgrade":{"b":"255 135 134"},"jewel_tiered":{"t":"255 212 154","b":"255 212 154","g":"12 62 40","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"9 46 29","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"11 28 20","e":"Yellow","m":"White"},"jewel_deco":{"b":"248 196 105"},"jewel_magic":{"t":"154 216 255","b":"154 216 255","g":"29 17 70","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"125 198 255","b":"125 198 255","e":"Blue","m":"Blue"},"ground_high":{"g":"42 15 68"},"ground_mid":{"g":"27 21 33"},"ground_weak":{"g":"32 25 41 240"},"ground_weak2":{"g":"51 43 64 190"},"ground_vendor":{"g":"25 20 31 180"},"ground_unremarkable":{"g":"25 20 31 140"},"craft_chance":{"t":"255 151 196","b":"255 151 196","g":"62 13 54","e":"Pink","m":"Pink"},"craft_chance_low":{"b":"139 255 181","e":"Green","m":"Green"},"craft_eco_a":{"t":"251 228 217","b":"255 151 153","g":"62 13 54","e":"Pink","m":"Pink"},"craft_eco_b":{"b":"255 151 153","g":"22 17 27","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"255 187 129"},"craft_toplevel":{"b":"195 133 74"},"salvage_bright":{"b":"169 168 195"},"salvage_dim":{"b":"108 109 145"},"flask_charm":{"b":"123 219 140"},"flask_charm_high":{"b":"255 187 129","g":"11 30 46"},"gold_huge":{"t":"251 228 217","b":"255 212 154","g":"12 62 40","e":"Yellow","m":"Yellow"},"gold_large":{"t":"255 212 154","b":"255 212 154","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"255 214 158","b":"231 184 120","e":"Yellow"},"gold_small":{"t":"182 164 156","b":"36 29 43","g":"28 47 36 180"},"xeno_d":{"t":"158 189 255","b":"158 189 255","e":"Cyan","m":"Cyan"},"unknown_item":{"t":"37 9 58","b":"137 255 244","g":"249 147 254","e":"Pink","m":"Pink"},"deco_remove_normal":{"t":"179 178 204","b":"29 23 35","g":"36 29 45 240"},"deco_remove_magic":{"t":"152 176 255","b":"29 23 35","g":"36 29 45 240"},"rare_deco":{"b":"29 23 35"},"flask_endgame":{"b":"255 187 129"},"flask_life":{"b":"255 141 176"},"flask_mana":{"b":"141 194 255"},"leveling_currency_rare":{"t":"251 228 217","b":"251 228 217","g":"29 17 70","e":"White","m":"White"},"leveling_currency_magic":{"t":"208 229 245","b":"208 229 245","g":"29 26 48"},"leveling_currency_start":{"t":"124 185 212","b":"124 185 212"},"supply_variant":{"t":"121 229 162","b":"121 229 162","g":"24 37 57","e":"Cyan","m":"Cyan"}}},{"name":"Moonlight","author":"LuciferTFFT#1636","notes":"Cool spectrum only - lavender, periwinkle, ice and seafoam. Very cohesive; tier rank leans on brightness and fill rather than hue, so it is the calmest of the three.","roles":{"apex":{"t":"16 22 54","b":"236 244 255","g":"196 226 255","e":"White","m":"White"},"currency_a":{"t":"41 22 50","b":"245 227 253","g":"232 186 249","e":"Purple","m":"Purple"},"currency_b":{"t":"32 22 50","b":"236 227 253","g":"211 193 246","e":"Purple","m":"Purple"},"currency_c":{"t":"30 26 54","b":"230 227 253","g":"202 194 245","e":"Blue","m":"Blue"},"currency_d":{"t":"15 20 38","b":"229 234 250","g":"186 198 236","e":"Cyan","m":"Cyan"},"supply_mid":{"t":"194 192 213","b":"120 117 153","g":"57 55 68"},"currency_e":{"t":"196 193 246","b":"196 193 246","g":"37 32 62","e":"White","m":"White"},"supply_low":{"t":"150 147 166"},"fragment_a":{"t":"13 37 44","b":"227 246 253","g":"166 226 244","e":"Purple","m":"Purple"},"fragment_b":{"t":"19 38 43","b":"223 243 249","g":"171 216 229","e":"Cyan","m":"Cyan"},"fragment_c":{"t":"193 234 246","b":"193 234 246","g":"26 52 55","e":"Cyan","m":"Cyan"},"fragment_d":{"t":"193 234 246","b":"102 156 172","g":"26 52 55"},"fragment_e":{"t":"184 223 232","b":"100 128 136","g":"39 36 44"},"unique_t0":{"t":"22 14 52","b":"244 238 255","g":"186 168 255","e":"Purple","m":"Purple"},"unique_a":{"t":"24 20 56","b":"236 232 255","g":"162 158 246","e":"Purple","m":"Purple"},"unique_b":{"t":"156 227 234","b":"156 227 234","g":"27 51 53","e":"Blue","m":"Blue"},"unique_c":{"t":"139 194 199","b":"83 121 125","g":"31 47 48","e":"Blue","m":"Blue"},"unique_exceptional":{"t":"222 245 252","b":"184 197 238","g":"56 37 87","e":"Purple","m":"Purple"},"unique_special":{"t":"32 22 50","b":"235 227 253","g":"214 201 244","e":"Blue","m":"Blue"},"unique_boss":{"t":"32 22 50","b":"240 229 250","g":"217 192 239","e":"Purple","m":"Purple"},"exotic_high":{"t":"184 197 238","b":"184 197 238","g":"25 28 55","e":"Cyan","m":"Cyan"},"exotic_low":{"t":"159 173 208","b":"159 173 208","e":"Cyan"},"exotic_mod":{"t":"184 197 238","b":"184 197 238","g":"40 30 60","e":"Cyan","m":"Cyan"},"artifact_high":{"t":"186 246 249","b":"186 246 249","g":"45 26 54","e":"Cyan","m":"Cyan"},"artifact":{"t":"186 246 249","b":"186 246 249","g":"43 33 46","e":"Cyan","m":"Cyan"},"corrupt":{"b":"102 172 172 240"},"corrupt_high":{"b":"169 247 248"},"gem_high":{"t":"183 187 238","b":"183 187 238","g":"24 21 58","e":"Cyan","m":"Cyan"},"gem_low":{"t":"151 154 212","b":"151 154 212","e":"Cyan"},"quest":{"t":"183 208 241","e":"Cyan","m":"Cyan"},"map_top":{"t":"41 22 50","b":"245 227 253","g":"232 186 249","e":"Purple","m":"Purple"},"map_high":{"t":"193 234 246","b":"193 234 246","g":"26 47 54","e":"Cyan","m":"Cyan"},"map_mid":{"t":"232 245 247","e":"White","m":"White"},"map_low":{"t":"202 199 211","e":"White","m":"White"},"map_special_high":{"t":"32 22 50","b":"240 229 250","g":"217 192 239","e":"Purple","m":"Purple"},"map_special_low":{"t":"220 197 239","b":"220 197 239","e":"Purple","m":"Purple"},"deco_bright":{"b":"232 245 247"},"deco_dim":{"b":"202 199 211"},"deco_upgrade":{"b":"169 244 248"},"jewel_tiered":{"t":"193 234 246","b":"193 234 246","g":"26 47 54","e":"Cyan","m":"Cyan"},"jewel_ground_high":{"g":"19 35 40","e":"Cyan","m":"Cyan"},"jewel_ground_low":{"g":"17 23 25","e":"Cyan","m":"White"},"jewel_deco":{"b":"154 208 225"},"jewel_magic":{"t":"196 193 246","b":"196 193 246","g":"37 32 62","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"177 171 237","b":"177 171 237","e":"Blue","m":"Blue"},"ground_high":{"g":"40 30 60"},"ground_mid":{"g":"29 27 32"},"ground_weak":{"g":"34 32 39 240"},"ground_weak2":{"g":"56 54 62 190"},"ground_vendor":{"g":"27 25 30 180"},"ground_unremarkable":{"g":"27 25 30 140"},"craft_chance":{"t":"232 186 249","b":"232 186 249","g":"45 26 54","e":"Purple","m":"Purple"},"craft_chance_low":{"b":"184 197 238","e":"Cyan","m":"Cyan"},"craft_eco_a":{"t":"232 245 247","b":"186 246 249","g":"45 26 54","e":"Purple","m":"Purple"},"craft_eco_b":{"b":"186 246 249","g":"23 22 26","e":"Cyan","m":"Cyan"},"craft_level82":{"t":"168 229 244"},"craft_toplevel":{"b":"111 164 177"},"salvage_bright":{"b":"191 188 201"},"salvage_dim":{"b":"131 125 147"},"flask_charm":{"b":"159 173 208"},"flask_charm_high":{"b":"168 229 244","g":"20 25 40"},"gold_huge":{"t":"232 245 247","b":"193 234 246","g":"26 47 54","e":"Cyan","m":"Cyan"},"gold_large":{"t":"193 234 246","b":"193 234 246","e":"Cyan","m":"Cyan"},"gold_medium":{"t":"200 233 243","b":"161 204 216","e":"Cyan"},"gold_small":{"t":"175 186 188","b":"38 37 41","g":"36 43 44 180"},"xeno_d":{"t":"204 196 247","b":"204 196 247","e":"Cyan","m":"Cyan"},"unknown_item":{"t":"32 22 50","b":"183 187 238","g":"217 192 239","e":"Purple","m":"Purple"},"deco_remove_normal":{"t":"202 199 211","b":"30 29 33","g":"39 37 43 240"},"deco_remove_magic":{"t":"200 189 247","b":"30 29 33","g":"39 37 43 240"},"rare_deco":{"b":"30 29 33"},"flask_endgame":{"b":"168 229 244"},"flask_life":{"b":"227 183 241"},"flask_mana":{"b":"190 183 241"},"leveling_currency_rare":{"t":"232 245 247","b":"232 245 247","g":"37 32 62","e":"White","m":"White"},"leveling_currency_magic":{"t":"235 234 246","b":"235 234 246","g":"36 35 45"},"leveling_currency_start":{"t":"160 158 203","b":"160 158 203"},"supply_variant":{"t":"160 173 215","b":"160 173 215","g":"35 38 52","e":"Cyan","m":"Cyan"}}},{"name":"Ember","author":"LuciferTFFT#1636","notes":"Warm and high contrast: currency burns orange and gold, uniques glow deep crimson, everything else settles into ash. No pink anywhere.","roles":{"apex":{"t":"35 25 0","b":"255 202 179","g":"255 229 168","e":"Yellow","m":"Yellow"},"currency_a":{"t":"47 16 0","b":"255 238 229","g":"255 165 113","e":"Orange","m":"Orange"},"currency_b":{"t":"41 21 0","b":"255 239 222","g":"255 187 111","e":"Orange","m":"Orange"},"currency_c":{"t":"35 25 0","b":"251 241 216","g":"238 198 81","e":"Yellow","m":"Yellow"},"currency_d":{"t":"34 24 15","b":"249 240 232","g":"229 196 165","e":"White","m":"White"},"supply_mid":{"t":"201 187 174","b":"130 120 111","g":"67 63 60"},"currency_e":{"t":"238 213 146","b":"238 213 146","g":"73 56 2","e":"White","m":"White"},"supply_low":{"t":"174 162 151"},"supply_variant":{"t":"177 161 147","b":"177 161 147","g":"56 48 40","e":"White","m":"White"},"fragment_a":{"t":"19 27 38","b":"236 242 251","g":"179 205 239","e":"White","m":"White"},"fragment_b":{"t":"19 27 38","b":"236 242 251","g":"171 188 210","e":"White","m":"White"},"fragment_c":{"t":"200 217 240","b":"200 217 240","g":"47 58 72","e":"White","m":"White"},"fragment_d":{"t":"200 217 240","b":"113 123 137","g":"47 58 72"},"fragment_e":{"t":"176 191 211","b":"113 123 137","g":"55 48 43"},"unique_t0":{"t":"255 248 247","b":"255 210 204","g":"168 0 15","e":"Red","m":"Red"},"unique_a":{"t":"255 248 247","b":"255 210 204","g":"187 68 60","e":"Red","m":"Red"},"unique_b":{"t":"255 200 193","b":"255 200 193","g":"93 37 32","e":"Brown","m":"Brown"},"unique_c":{"t":"212 144 136","b":"161 106 99","g":"73 38 34","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"252 241 216","b":"165 232 213","g":"85 43 43","e":"Red","m":"Red"},"unique_special":{"t":"255 248 246","b":"255 211 195","g":"155 65 30","e":"Red","m":"Red"},"unique_boss":{"t":"255 248 248","b":"255 209 211","g":"149 53 67","e":"Red","m":"Red"},"exotic_high":{"t":"165 232 213","b":"165 232 213","g":"17 67 56","e":"Green","m":"Green"},"exotic_low":{"t":"128 177 162","b":"128 177 162","e":"Green"},"exotic_mod":{"t":"165 232 213","b":"165 232 213","g":"85 43 43","e":"Green","m":"Green"},"artifact_high":{"t":"255 202 176","b":"255 202 176","g":"86 45 22","e":"Orange","m":"Orange"},"artifact":{"t":"255 202 176","b":"255 202 176","g":"68 42 29","e":"Orange","m":"Orange"},"corrupt":{"b":"161 75 67 240"},"corrupt_high":{"b":"240 115 104"},"gem_high":{"t":"160 228 245","b":"160 228 245","g":"10 64 75","e":"Cyan","m":"Cyan"},"gem_low":{"t":"124 174 187","b":"124 174 187","e":"Cyan"},"quest":{"t":"198 227 170","e":"Green","m":"Green"},"map_top":{"t":"47 16 0","b":"255 238 229","g":"255 165 113","e":"Orange","m":"Orange"},"map_high":{"t":"243 211 146","b":"243 211 146","g":"74 54 1","e":"Yellow","m":"Yellow"},"map_mid":{"t":"247 240 235","e":"White","m":"White"},"map_low":{"t":"202 186 175","e":"White","m":"White"},"map_special_high":{"t":"10 29 38","b":"231 244 251","g":"155 212 240","e":"White","m":"White"},"map_special_low":{"t":"186 222 240","b":"186 222 240","e":"White","m":"White"},"deco_bright":{"b":"247 240 235"},"deco_dim":{"b":"202 186 175"},"deco_upgrade":{"b":"255 202 176"},"jewel_tiered":{"t":"247 210 147","b":"247 210 147","g":"76 52 2","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"76 52 2","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"62 47 21","e":"Yellow","m":"White"},"jewel_deco":{"b":"217 185 130"},"jewel_magic":{"t":"181 221 255","b":"181 221 255","g":"25 60 88","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"132 169 202","b":"132 169 202","e":"Blue","m":"Blue"},"ground_high":{"g":"85 43 43"},"ground_mid":{"g":"55 48 43"},"ground_weak":{"g":"35 33 32 240"},"ground_weak2":{"g":"67 63 60 190"},"ground_vendor":{"g":"35 33 32 180"},"ground_unremarkable":{"g":"35 33 32 140"},"craft_chance":{"t":"255 203 174","b":"255 203 174","g":"93 40 0","e":"Orange","m":"Orange"},"craft_chance_low":{"b":"165 232 213","e":"Green","m":"Green"},"craft_eco_a":{"t":"247 240 235","b":"255 202 176","g":"93 40 0","e":"Orange","m":"Orange"},"craft_eco_b":{"b":"255 202 176","g":"35 33 32","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"211 187 130"},"craft_toplevel":{"b":"113 123 137"},"salvage_bright":{"b":"202 186 175"},"salvage_dim":{"b":"131 120 112"},"flask_charm":{"b":"128 177 162"},"flask_charm_high":{"b":"211 187 130","g":"17 67 56"},"flask_endgame":{"b":"211 187 130"},"flask_life":{"b":"214 112 102"},"flask_mana":{"b":"151 194 240"},"gold_huge":{"t":"247 240 235","b":"240 213 146","g":"74 56 2","e":"Yellow","m":"Yellow"},"gold_large":{"t":"240 213 146","b":"240 213 146","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"211 187 130","b":"183 163 114","e":"Yellow"},"gold_small":{"t":"175 162 152","b":"39 37 35","g":"59 48 21 180"},"xeno_d":{"t":"222 206 255","b":"222 206 255","e":"Purple","m":"Purple"},"unknown_item":{"t":"31 19 50","b":"160 228 245","g":"212 189 255","e":"Purple","m":"Purple"},"deco_remove_normal":{"t":"202 186 175","b":"39 37 35","g":"55 48 43 240"},"deco_remove_magic":{"t":"151 195 234","b":"39 37 35","g":"55 48 43 240"},"rare_deco":{"b":"35 33 32"},"leveling_currency_rare":{"t":"247 240 235","b":"247 240 235","g":"73 56 2","e":"White","m":"White"},"leveling_currency_magic":{"t":"229 212 198","b":"229 212 198","g":"67 63 60"},"leveling_currency_start":{"t":"174 162 151","b":"174 162 151"}}},{"name":"Vivid","author":"LuciferTFFT#1636","notes":"Bold, saturated colours closest to classic filters. Every tier is obvious at a glance, at the cost of a busier screen.","roles":{"apex":{"t":"93 0 9","b":"255 190 184","g":"255 246 245","e":"Red","m":"Red"},"currency_a":{"t":"44 8 6","b":"255 237 235","g":"231 65 59","e":"Red","m":"Red"},"currency_b":{"t":"28 14 42","b":"245 238 255","g":"204 159 255","e":"Purple","m":"Purple"},"currency_c":{"t":"5 21 46","b":"234 243 255","g":"138 185 255","e":"Blue","m":"Blue"},"currency_d":{"t":"0 27 26","b":"216 250 247","g":"0 210 202","e":"Cyan","m":"Cyan"},"supply_mid":{"t":"170 189 209","b":"115 123 133","g":"61 64 68"},"currency_e":{"t":"181 211 255","b":"181 211 255","g":"21 57 109","e":"White","m":"White"},"supply_low":{"t":"150 167 185"},"supply_variant":{"t":"57 186 180","b":"57 186 180","g":"17 58 56","e":"Cyan","m":"Cyan"},"fragment_a":{"t":"27 22 0","b":"248 243 216","g":"239 209 39","e":"Yellow","m":"Yellow"},"fragment_b":{"t":"27 22 0","b":"248 243 216","g":"220 196 76","e":"Yellow","m":"Yellow"},"fragment_c":{"t":"232 210 102","b":"232 210 102","g":"75 64 0","e":"Yellow","m":"Yellow"},"fragment_d":{"t":"232 210 102","b":"132 123 81","g":"75 64 0"},"fragment_e":{"t":"207 187 90","b":"132 123 81","g":"48 50 53"},"unique_t0":{"t":"39 14 0","b":"255 238 227","g":"246 128 0","e":"Orange","m":"Orange"},"unique_a":{"t":"39 14 0","b":"255 238 227","g":"255 155 81","e":"Orange","m":"Orange"},"unique_b":{"t":"255 194 153","b":"255 194 153","g":"92 44 0","e":"Brown","m":"Brown"},"unique_c":{"t":"222 143 86","b":"153 112 84","g":"69 42 24","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"255 237 235","b":"153 232 155","g":"51 52 100","e":"Blue","m":"Blue"},"unique_special":{"t":"18 19 42","b":"239 241 255","g":"169 175 255","e":"Blue","m":"Blue"},"unique_boss":{"t":"34 13 33","b":"255 234 254","g":"240 141 238","e":"Purple","m":"Purple"},"exotic_high":{"t":"153 232 155","b":"153 232 155","g":"21 70 26","e":"Green","m":"Green"},"exotic_low":{"t":"119 183 121","b":"119 183 121","e":"Green"},"exotic_mod":{"t":"153 232 155","b":"153 232 155","g":"51 52 100","e":"Green","m":"Green"},"artifact_high":{"t":"255 192 170","b":"255 192 170","g":"99 35 10","e":"Orange","m":"Orange"},"artifact":{"t":"255 192 170","b":"255 192 170","g":"71 41 30","e":"Orange","m":"Orange"},"corrupt":{"b":"164 104 97 240"},"corrupt_high":{"b":"255 84 76"},"gem_high":{"t":"74 233 249","b":"74 233 249","g":"0 69 75","e":"Cyan","m":"Cyan"},"gem_low":{"t":"54 184 197","b":"54 184 197","e":"Cyan"},"quest":{"t":"162 230 148","e":"Green","m":"Green"},"map_top":{"t":"44 8 6","b":"255 237 235","g":"231 65 59","e":"Red","m":"Red"},"map_high":{"t":"226 212 104","b":"226 212 104","g":"74 66 0","e":"Yellow","m":"Yellow"},"map_mid":{"t":"240 242 245","e":"White","m":"White"},"map_low":{"t":"180 187 198","e":"White","m":"White"},"map_special_high":{"t":"34 13 33","b":"255 234 254","g":"240 141 238","e":"Purple","m":"Purple"},"map_special_low":{"t":"255 178 252","b":"255 178 252","e":"Purple","m":"Purple"},"deco_bright":{"b":"240 242 245"},"deco_dim":{"b":"180 187 198"},"deco_upgrade":{"b":"255 192 170"},"jewel_tiered":{"t":"236 208 101","b":"236 208 101","g":"75 61 0","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"70 58 0","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"57 49 21","e":"Yellow","m":"White"},"jewel_deco":{"b":"211 186 89"},"jewel_magic":{"t":"181 211 255","b":"181 211 255","g":"26 58 104","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"121 166 233","b":"121 166 233","e":"Blue","m":"Blue"},"ground_high":{"g":"51 52 100"},"ground_mid":{"g":"48 50 53"},"ground_weak":{"g":"33 34 34 240"},"ground_weak2":{"g":"63 64 66 190"},"ground_vendor":{"g":"33 34 34 180"},"ground_unremarkable":{"g":"33 34 34 140"},"craft_chance":{"t":"255 191 182","b":"255 191 182","g":"104 28 25","e":"Red","m":"Red"},"craft_chance_low":{"b":"153 232 155","e":"Green","m":"Green"},"craft_eco_a":{"t":"240 242 245","b":"255 192 170","g":"104 28 25","e":"Red","m":"Red"},"craft_eco_b":{"b":"255 192 170","g":"33 34 34","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"214 184 88"},"craft_toplevel":{"b":"132 123 81"},"salvage_bright":{"b":"180 187 198"},"salvage_dim":{"b":"119 122 128"},"flask_charm":{"b":"119 183 121"},"flask_charm_high":{"b":"214 184 88","g":"21 70 26"},"flask_endgame":{"b":"214 184 88"},"flask_life":{"b":"255 83 82"},"flask_mana":{"b":"143 188 255"},"gold_huge":{"t":"240 242 245","b":"240 206 101","g":"75 59 0","e":"Yellow","m":"Yellow"},"gold_large":{"t":"240 206 101","b":"240 206 101","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"214 184 88","b":"189 162 77","e":"Yellow"},"gold_small":{"t":"159 165 175","b":"37 37 38","g":"58 49 21 180"},"xeno_d":{"t":"255 181 238","b":"255 181 238","e":"Pink","m":"Pink"},"unknown_item":{"t":"36 11 32","b":"74 233 249","g":"254 132 230","e":"Pink","m":"Pink"},"deco_remove_normal":{"t":"180 187 198","b":"37 37 38","g":"48 50 53 240"},"deco_remove_magic":{"t":"143 188 255","b":"37 37 38","g":"48 50 53 240"},"rare_deco":{"b":"33 34 34"},"leveling_currency_rare":{"t":"240 242 245","b":"240 242 245","g":"21 57 109","e":"White","m":"White"},"leveling_currency_magic":{"t":"202 209 222","b":"202 209 222","g":"63 64 66"},"leveling_currency_start":{"t":"150 167 185","b":"150 167 185"}}},{"name":"Verdant","author":"LuciferTFFT#1636","notes":"Forest tones: leaf, jade and pine for currency, honey for fragments, deep berry for uniques. Earthy and easy on the eyes over long sessions.","roles":{"apex":{"t":"40 34 0","b":"176 236 143","g":"244 234 171","e":"Yellow","m":"Yellow"},"currency_a":{"t":"20 40 0","b":"231 249 218","g":"169 221 125","e":"Green","m":"Green"},"currency_b":{"t":"0 42 25","b":"221 250 234","g":"127 226 179","e":"Green","m":"Green"},"currency_c":{"t":"0 40 40","b":"216 250 249","g":"101 225 225","e":"Cyan","m":"Cyan"},"currency_d":{"t":"21 39 22","b":"234 245 234","g":"179 214 179","e":"White","m":"White"},"supply_mid":{"t":"182 194 179","b":"117 125 115","g":"62 65 61"},"currency_e":{"t":"140 235 234","b":"140 235 234","g":"0 74 74","e":"White","m":"White"},"supply_low":{"t":"158 168 156"},"supply_variant":{"t":"150 171 150","b":"150 171 150","g":"42 53 42","e":"White","m":"White"},"fragment_a":{"t":"50 28 0","b":"255 239 221","g":"253 188 110","e":"Orange","m":"Orange"},"fragment_b":{"t":"50 28 0","b":"255 239 221","g":"228 175 114","e":"Orange","m":"Orange"},"fragment_c":{"t":"255 205 148","b":"255 205 148","g":"81 49 0","e":"Orange","m":"Orange"},"fragment_d":{"t":"255 205 148","b":"148 116 78","g":"81 49 0"},"fragment_e":{"t":"227 180 127","b":"148 116 78","g":"49 50 45"},"unique_t0":{"t":"255 248 248","b":"255 209 209","g":"166 0 46","e":"Red","m":"Red"},"unique_a":{"t":"255 248 248","b":"255 209 209","g":"184 69 79","e":"Red","m":"Red"},"unique_b":{"t":"255 199 200","b":"255 199 200","g":"92 37 41","e":"Brown","m":"Brown"},"unique_c":{"t":"210 144 146","b":"159 106 107","g":"72 38 39","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"246 243 219","b":"214 209 255","g":"74 46 71","e":"Purple","m":"Purple"},"unique_special":{"t":"255 248 251","b":"250 208 230","g":"148 71 117","e":"Purple","m":"Purple"},"unique_boss":{"t":"255 248 250","b":"255 207 220","g":"152 59 93","e":"Red","m":"Red"},"exotic_high":{"t":"214 209 255","b":"214 209 255","g":"57 52 84","e":"Purple","m":"Purple"},"exotic_low":{"t":"163 159 198","b":"163 159 198","e":"Purple"},"exotic_mod":{"t":"214 209 255","b":"214 209 255","g":"74 46 71","e":"Purple","m":"Purple"},"artifact_high":{"t":"255 202 179","b":"255 202 179","g":"87 44 24","e":"Orange","m":"Orange"},"artifact":{"t":"255 202 179","b":"255 202 179","g":"69 42 30","e":"Orange","m":"Orange"},"corrupt":{"b":"161 106 101 240"},"corrupt_high":{"b":"234 119 112"},"gem_high":{"t":"168 225 255","b":"168 225 255","g":"1 63 87","e":"Blue","m":"Blue"},"gem_low":{"t":"119 173 201","b":"119 173 201","e":"Blue"},"quest":{"t":"179 232 179","e":"Green","m":"Green"},"map_top":{"t":"20 40 0","b":"231 249 218","g":"169 221 125","e":"Green","m":"Green"},"map_high":{"t":"243 211 146","b":"243 211 146","g":"74 54 1","e":"Yellow","m":"Yellow"},"map_mid":{"t":"241 243 237","e":"White","m":"White"},"map_low":{"t":"188 192 179","e":"White","m":"White"},"map_special_high":{"t":"38 27 56","b":"244 239 255","g":"211 190 252","e":"Purple","m":"Purple"},"map_special_low":{"t":"222 206 255","b":"222 206 255","e":"Purple","m":"Purple"},"deco_bright":{"b":"241 243 237"},"deco_dim":{"b":"188 192 179"},"deco_upgrade":{"b":"255 202 179"},"jewel_tiered":{"t":"247 210 147","b":"247 210 147","g":"76 52 2","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"76 52 2","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"62 47 21","e":"Yellow","m":"White"},"jewel_deco":{"b":"217 185 130"},"jewel_magic":{"t":"187 219 255","b":"187 219 255","g":"27 59 92","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"133 168 208","b":"133 168 208","e":"Blue","m":"Blue"},"ground_high":{"g":"74 46 71"},"ground_mid":{"g":"49 50 45"},"ground_weak":{"g":"33 34 32 240"},"ground_weak2":{"g":"63 64 61 190"},"ground_vendor":{"g":"33 34 32 180"},"ground_unremarkable":{"g":"33 34 32 140"},"craft_chance":{"t":"188 231 153","b":"188 231 153","g":"39 66 9","e":"Green","m":"Green"},"craft_chance_low":{"b":"214 209 255","e":"Purple","m":"Purple"},"craft_eco_a":{"t":"241 243 237","b":"255 202 179","g":"39 66 9","e":"Green","m":"Green"},"craft_eco_b":{"b":"255 202 179","g":"33 34 32","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"211 187 130"},"craft_toplevel":{"b":"148 116 78"},"salvage_bright":{"b":"188 192 179"},"salvage_dim":{"b":"121 124 115"},"flask_charm":{"b":"163 159 198"},"flask_charm_high":{"b":"211 187 130","g":"57 52 84"},"flask_endgame":{"b":"211 187 130"},"flask_life":{"b":"212 123 124"},"flask_mana":{"b":"151 194 240"},"gold_huge":{"t":"241 243 237","b":"240 213 146","g":"74 56 2","e":"Yellow","m":"Yellow"},"gold_large":{"t":"240 213 146","b":"240 213 146","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"211 187 130","b":"183 163 114","e":"Yellow"},"gold_small":{"t":"163 166 156","b":"38 39 37","g":"59 48 21 180"},"xeno_d":{"t":"129 235 246","b":"129 235 246","e":"Cyan","m":"Cyan"},"unknown_item":{"t":"0 39 43","b":"168 225 255","g":"83 225 240","e":"Cyan","m":"Cyan"},"deco_remove_normal":{"t":"188 192 179","b":"38 39 37","g":"49 50 45 240"},"deco_remove_magic":{"t":"152 194 240","b":"38 39 37","g":"49 50 45 240"},"rare_deco":{"b":"33 34 32"},"leveling_currency_rare":{"t":"241 243 237","b":"241 243 237","g":"0 74 74","e":"White","m":"White"},"leveling_currency_magic":{"t":"213 218 203","b":"213 218 203","g":"63 64 61"},"leveling_currency_start":{"t":"158 168 156","b":"158 168 156"}}},{"name":"Graphite","author":"LuciferTFFT#1636","notes":"Monochrome greys ranked by brightness, with one ember accent kept for uniques. Quiet on screen, so the few coloured drops stand out.","roles":{"apex":{"t":"34 34 34","b":"255 202 183","g":"248 248 248","e":"White","m":"White"},"currency_a":{"t":"32 34 37","b":"240 242 244","g":"218 222 229","e":"White","m":"White"},"currency_b":{"t":"32 34 37","b":"240 242 244","g":"198 203 210","e":"White","m":"White"},"currency_c":{"t":"32 34 37","b":"240 242 244","g":"176 180 187","e":"White","m":"White"},"currency_d":{"t":"32 34 37","b":"240 242 244","g":"154 159 165","e":"Grey","m":"Grey"},"supply_mid":{"t":"185 190 198","b":"119 122 128","g":"63 64 66"},"currency_e":{"t":"212 216 222","b":"212 216 222","g":"55 57 61","e":"White","m":"White"},"supply_low":{"t":"161 165 171"},"supply_variant":{"t":"162 165 169","b":"162 165 169","g":"48 50 52","e":"Grey","m":"Grey"},"fragment_a":{"t":"39 33 24","b":"245 241 235","g":"213 200 183","e":"White","m":"White"},"fragment_b":{"t":"39 33 24","b":"245 241 235","g":"195 185 171","e":"White","m":"White"},"fragment_c":{"t":"224 214 200","b":"224 214 200","g":"63 56 47","e":"White","m":"White"},"fragment_d":{"t":"224 214 200","b":"128 121 113","g":"63 56 47"},"fragment_e":{"t":"197 188 176","b":"128 121 113","g":"48 50 52"},"unique_t0":{"t":"60 19 0","b":"255 238 230","g":"249 104 0","e":"Orange","m":"Orange"},"unique_a":{"t":"60 19 0","b":"255 238 230","g":"255 142 89","e":"Orange","m":"Orange"},"unique_b":{"t":"255 202 179","b":"255 202 179","g":"97 36 0","e":"Brown","m":"Brown"},"unique_c":{"t":"219 143 108","b":"167 105 76","g":"77 37 18","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"242 242 242","b":"202 221 213","g":"54 57 63","e":"Orange","m":"Orange"},"unique_special":{"t":"60 20 1","b":"255 238 230","g":"222 142 105","e":"Orange","m":"Orange"},"unique_boss":{"t":"64 13 0","b":"255 237 232","g":"241 139 108","e":"Orange","m":"Orange"},"exotic_high":{"t":"202 221 213","b":"202 221 213","g":"48 60 56","e":"White","m":"White"},"exotic_low":{"t":"154 168 163","b":"154 168 163","e":"White"},"exotic_mod":{"t":"202 221 213","b":"202 221 213","g":"54 57 63","e":"White","m":"White"},"artifact_high":{"t":"227 212 201","b":"227 212 201","g":"64 55 48","e":"White","m":"White"},"artifact":{"t":"227 212 201","b":"227 212 201","g":"54 48 44","e":"White","m":"White"},"corrupt":{"b":"152 110 106 240"},"corrupt_high":{"b":"255 200 195"},"gem_high":{"t":"198 220 229","b":"198 220 229","g":"46 60 66","e":"White","m":"White"},"gem_low":{"t":"151 168 175","b":"151 168 175","e":"White"},"quest":{"t":"204 221 206","e":"White","m":"White"},"map_top":{"t":"32 34 37","b":"240 242 244","g":"218 222 229","e":"White","m":"White"},"map_high":{"t":"224 214 200","b":"224 214 200","g":"63 56 47","e":"White","m":"White"},"map_mid":{"t":"240 242 245","e":"White","m":"White"},"map_low":{"t":"186 190 196","e":"White","m":"White"},"map_special_high":{"t":"39 33 24","b":"245 241 235","g":"200 188 171","e":"White","m":"White"},"map_special_low":{"t":"224 214 200","b":"224 214 200","e":"White","m":"White"},"deco_bright":{"b":"240 242 245"},"deco_dim":{"b":"186 190 196"},"deco_upgrade":{"b":"227 212 201"},"jewel_tiered":{"t":"226 213 196","b":"226 213 196","g":"64 56 45","e":"White","m":"White"},"jewel_ground_high":{"g":"64 56 45","e":"White","m":"White"},"jewel_ground_low":{"g":"54 49 42","e":"White","m":"White"},"jewel_deco":{"b":"199 188 173"},"jewel_magic":{"t":"200 218 236","b":"200 218 236","g":"48 58 70","e":"White","m":"White"},"jewel_magic_low":{"t":"153 166 180","b":"153 166 180","e":"White","m":"White"},"ground_high":{"g":"54 57 63"},"ground_mid":{"g":"48 50 52"},"ground_weak":{"g":"33 34 34 240"},"ground_weak2":{"g":"63 64 65 190"},"ground_vendor":{"g":"33 34 34 180"},"ground_unremarkable":{"g":"33 34 34 140"},"craft_chance":{"t":"212 216 222","b":"212 216 222","g":"55 57 61","e":"White","m":"White"},"craft_chance_low":{"b":"202 221 213","e":"White","m":"White"},"craft_eco_a":{"t":"240 242 245","b":"227 212 201","g":"55 57 61","e":"White","m":"White"},"craft_eco_b":{"b":"227 212 201","g":"33 34 34","e":"White","m":"White"},"craft_level82":{"t":"198 188 173"},"craft_toplevel":{"b":"128 121 113"},"salvage_bright":{"b":"186 190 196"},"salvage_dim":{"b":"120 122 127"},"flask_charm":{"b":"154 168 163"},"flask_charm_high":{"b":"198 188 173","g":"48 60 56"},"flask_endgame":{"b":"198 188 173"},"flask_life":{"b":"219 178 177"},"flask_mana":{"b":"167 193 220"},"gold_huge":{"t":"240 242 245","b":"225 214 196","g":"63 56 45","e":"White","m":"White"},"gold_large":{"t":"225 214 196","b":"225 214 196","e":"White","m":"White"},"gold_medium":{"t":"198 188 173","b":"172 163 150","e":"White"},"gold_small":{"t":"161 165 170","b":"37 37 38","g":"53 49 42 180"},"xeno_d":{"t":"212 216 222","b":"212 216 222","e":"White","m":"White"},"unknown_item":{"t":"32 34 37","b":"198 220 229","g":"208 212 220","e":"White","m":"White"},"deco_remove_normal":{"t":"186 190 196","b":"37 37 38","g":"48 50 52 240"},"deco_remove_magic":{"t":"177 192 208","b":"37 37 38","g":"48 50 52 240"},"rare_deco":{"b":"33 34 34"},"leveling_currency_rare":{"t":"240 242 245","b":"240 242 245","g":"55 57 61","e":"White","m":"White"},"leveling_currency_magic":{"t":"211 216 223","b":"211 216 223","g":"63 64 65"},"leveling_currency_start":{"t":"161 165 171","b":"161 165 171"}}},{"name":"Clarity","author":"LuciferTFFT#1636","notes":"Colourblind-friendly, after the Okabe-Ito palette: blue, orange, yellow and bluish green, with uniques as deep vermilion plates. Rank shows by brightness and fill, not by red or green.","roles":{"apex":{"t":"24 23 10","b":"190 218 255","g":"248 237 101","e":"Yellow","m":"Yellow"},"currency_a":{"t":"0 37 55","b":"228 245 255","g":"171 224 255","e":"Blue","m":"Blue"},"currency_b":{"t":"54 19 40","b":"255 236 246","g":"255 173 219","e":"Purple","m":"Purple"},"currency_c":{"t":"3 32 73","b":"234 243 255","g":"132 182 255","e":"Blue","m":"Blue"},"currency_d":{"t":"0 41 30","b":"220 250 238","g":"99 230 190","e":"Cyan","m":"Cyan"},"supply_mid":{"t":"176 192 204","b":"113 124 132","g":"60 64 67"},"currency_e":{"t":"192 217 255","b":"192 217 255","g":"27 57 100","e":"White","m":"White"},"supply_low":{"t":"153 167 177"},"supply_variant":{"t":"119 179 158","b":"119 179 158","g":"23 57 46","e":"Cyan","m":"Cyan"},"fragment_a":{"t":"51 28 0","b":"255 239 222","g":"255 187 111","e":"Orange","m":"Orange"},"fragment_b":{"t":"51 28 0","b":"255 239 222","g":"231 174 112","e":"Orange","m":"Orange"},"fragment_c":{"t":"255 205 152","b":"255 205 152","g":"83 48 0","e":"Orange","m":"Orange"},"fragment_d":{"t":"255 205 152","b":"150 115 77","g":"83 48 0"},"fragment_e":{"t":"229 179 124","b":"150 115 77","g":"48 50 52"},"unique_t0":{"t":"255 248 246","b":"255 211 195","g":"151 49 0","e":"Red","m":"Red"},"unique_a":{"t":"255 248 246","b":"255 211 195","g":"190 67 8","e":"Red","m":"Red"},"unique_b":{"t":"255 202 183","b":"255 202 183","g":"95 37 15","e":"Brown","m":"Brown"},"unique_c":{"t":"214 145 121","b":"162 106 87","g":"74 38 26","e":"Brown","m":"Brown"},"unique_exceptional":{"t":"245 244 212","b":"153 235 206","g":"62 50 82","e":"Purple","m":"Purple"},"unique_special":{"t":"255 248 251","b":"250 208 230","g":"154 77 123","e":"Purple","m":"Purple"},"unique_boss":{"t":"255 248 246","b":"255 211 195","g":"155 65 30","e":"Red","m":"Red"},"exotic_high":{"t":"153 235 206","b":"153 235 206","g":"3 73 55","e":"Green","m":"Green"},"exotic_low":{"t":"119 179 158","b":"119 179 158","e":"Green"},"exotic_mod":{"t":"153 235 206","b":"153 235 206","g":"62 50 82","e":"Green","m":"Green"},"artifact_high":{"t":"255 204 163","b":"255 204 163","g":"83 47 13","e":"Orange","m":"Orange"},"artifact":{"t":"255 204 163","b":"255 204 163","g":"66 44 25","e":"Orange","m":"Orange"},"corrupt":{"b":"158 108 99 240"},"corrupt_high":{"b":"255 201 191"},"gem_high":{"t":"163 226 255","b":"163 226 255","g":"0 63 85","e":"Cyan","m":"Cyan"},"gem_low":{"t":"117 174 199","b":"117 174 199","e":"Cyan"},"quest":{"t":"153 235 206","e":"Green","m":"Green"},"map_top":{"t":"0 37 55","b":"228 245 255","g":"171 224 255","e":"Blue","m":"Blue"},"map_high":{"t":"224 219 149","b":"224 219 149","g":"67 63 9","e":"Yellow","m":"Yellow"},"map_mid":{"t":"240 242 244","e":"White","m":"White"},"map_low":{"t":"185 190 196","e":"White","m":"White"},"map_special_high":{"t":"56 17 41","b":"255 236 246","g":"255 173 219","e":"Purple","m":"Purple"},"map_special_low":{"t":"255 195 228","b":"255 195 228","e":"Purple","m":"Purple"},"deco_bright":{"b":"240 242 244"},"deco_dim":{"b":"185 190 196"},"deco_upgrade":{"b":"255 204 163"},"jewel_tiered":{"t":"229 217 148","b":"229 217 148","g":"68 60 6","e":"Yellow","m":"Yellow"},"jewel_ground_high":{"g":"66 58 2","e":"Yellow","m":"Yellow"},"jewel_ground_low":{"g":"55 50 22","e":"Yellow","m":"White"},"jewel_deco":{"b":"201 191 131"},"jewel_magic":{"t":"192 217 255","b":"192 217 255","g":"33 57 93","e":"Blue","m":"Blue"},"jewel_magic_low":{"t":"138 166 209","b":"138 166 209","e":"Blue","m":"Blue"},"ground_high":{"g":"62 50 82"},"ground_mid":{"g":"48 50 52"},"ground_weak":{"g":"33 34 34 240"},"ground_weak2":{"g":"62 64 65 190"},"ground_vendor":{"g":"33 34 34 180"},"ground_unremarkable":{"g":"33 34 34 140"},"craft_chance":{"t":"171 224 255","b":"171 224 255","g":"0 62 90","e":"Blue","m":"Blue"},"craft_chance_low":{"b":"153 235 206","e":"Green","m":"Green"},"craft_eco_a":{"t":"240 242 244","b":"255 204 163","g":"0 62 90","e":"Blue","m":"Blue"},"craft_eco_b":{"b":"255 204 163","g":"33 34 34","e":"Yellow","m":"Yellow"},"craft_level82":{"t":"206 190 130"},"craft_toplevel":{"b":"150 115 77"},"salvage_bright":{"b":"185 190 196"},"salvage_dim":{"b":"119 123 126"},"flask_charm":{"b":"119 179 158"},"flask_charm_high":{"b":"206 190 130","g":"0 68 52"},"flask_endgame":{"b":"206 190 130"},"flask_life":{"b":"235 173 151"},"flask_mana":{"b":"151 194 240"},"gold_huge":{"t":"240 242 244","b":"234 215 147","g":"71 59 4","e":"Yellow","m":"Yellow"},"gold_large":{"t":"234 215 147","b":"234 215 147","e":"Yellow","m":"Yellow"},"gold_medium":{"t":"206 190 130","b":"178 165 114","e":"Yellow"},"gold_small":{"t":"161 165 170","b":"37 37 38","g":"57 49 21 180"},"xeno_d":{"t":"255 195 228","b":"255 195 228","e":"Pink","m":"Pink"},"unknown_item":{"t":"58 14 42","b":"163 226 255","g":"255 173 219","e":"Pink","m":"Pink"},"deco_remove_normal":{"t":"185 190 196","b":"37 37 38","g":"48 50 52 240"},"deco_remove_magic":{"t":"158 192 242","b":"37 37 38","g":"48 50 52 240"},"rare_deco":{"b":"33 34 34"},"leveling_currency_rare":{"t":"240 242 244","b":"240 242 244","g":"27 57 100","e":"White","m":"White"},"leveling_currency_magic":{"t":"210 216 222","b":"210 216 222","g":"62 64 65"},"leveling_currency_start":{"t":"153 167 177","b":"153 167 177"}}}]}</script>
+<script>
+(function(){
+"use strict";
+const D=JSON.parse(document.getElementById("data").textContent);
+/* engine:start (pure; tools/test_parity.js runs this block in Node against filter_themer.py) */
+const RM=D.roles.rolemap, NOCOL=new Set(D.roles.noColour);
+const NOCLASS=D.roles.noClass.map(([p,r])=>[new RegExp(p),r]);
+const PROPKEY={SetTextColor:"t",SetBorderColor:"b",SetBackgroundColor:"g",PlayEffect:"e",MinimapIcon:"m"};
+const HEAD=/^(#?)\s*(Show|Hide)\b/, CLS=/!([A-Za-z0-9_]+)\s*$/;
+const PROP=/^(#?)(\s*)(SetTextColor|SetBorderColor|SetBackgroundColor|PlayEffect|MinimapIcon)\s+(.*?)\s*$/;
+
+/* colour helpers: the theme gives "r g b"; the original alpha is kept */
+function colour(val, orig){
+  const t=val.trim().split(/\s+/), o=orig.trim().split(/\s+/);
+  if(t.length===3 && o.length===4) t.push(o[3]);
+  return t.join(" ");
+}
+function beam(val, orig){ return val + (/\bTemp\b/.test(orig) ? " Temp" : ""); }   // keep the Temp flag
+function icon(val, orig){                                                          // keep size and shape
+  const o=orig.trim().split(/\s+/);
+  if(o.length<3) return orig;
+  return o[0]+" "+val+" "+o.slice(2).join(" ");
+}
+
+/* the two structural edits */
+function structural(lines, opts, log){
+  if(opts.t0 && !lines.some(l=>l.indexOf("!uniques_t0")>=0)){
+    const i=lines.findIndex(l=>l.indexOf("Show # $type->uniques $tier->t1 !apex_stier")===0);
+    if(i<0) log("warn","top-tier unique rule not found - left as apex");
+    else{ lines[i]=lines[i].replace("!apex_stier","!uniques_t0");
+          log("ok","top-tier uniques given their own colour"); }
+  }
+  if(opts.split && !lines.some(l=>l.indexOf("!currency_dlow")>=0)){
+    const i=lines.findIndex(l=>l.indexOf("Show # %H5 $type->currency $tier->d !currency_d")===0);
+    let end=-1;
+    if(i>=0) for(let n=i;n<lines.length;n++) if(lines[n].indexOf("CustomAlertSound")===0){end=n;break;}
+    if(i<0||end<0){ log("warn","currency tier D rule not found - left exactly as it was"); return lines; }
+    const blk=lines.slice(i,end+1);
+    const bi=blk.findIndex(l=>/^\s*BaseType/.test(l));
+    const items=bi<0?[]:(blk[bi].match(/"[^"]*"/g)||[]);
+    /* A Greater or Perfect orb is a rank above its base version and must never be demoted to
+       the vendor bucket. Anything not named here stays loud, so a future change to NeverSink's
+       tier D fails safe. */
+    const VENDOR =/^"(Orb of Transmutation|Blacksmith's Whetstone)"$/;
+    const VARIANT=/^"(Greater|Perfect) Orb of (Transmutation|Augmentation)"$/;
+    const vendor =items.filter(x=>VENDOR.test(x));
+    const variant=items.filter(x=>VARIANT.test(x));
+    const loud   =items.filter(x=>!VENDOR.test(x)&&!VARIANT.test(x));
+    if(!items.length){ log("warn","tier D has no BaseType list - left as it was"); return lines; }
+    const mk=(head,names,size,eff,ico)=>blk.map(l=>{
+      const t=l.trim();
+      if(/^BaseType/.test(t))    return "\tBaseType == "+names.join(" ");
+      if(/^SetFontSize/.test(t)) return "\tSetFontSize "+size;
+      if(/^PlayEffect/.test(t))  return "\tPlayEffect "+eff;
+      if(/^MinimapIcon/.test(t)) return "\tMinimapIcon "+ico;
+      if(l.indexOf("Show")===0)  return head;
+      return l;
+    });
+    const out=[];
+    if(loud.length)    out.push(...mk("Show # %H5 $type->currency $tier->d !currency_d",loud,45,"Cyan","1 Cyan Circle"),"");
+    if(variant.length) out.push(...mk("Show # %H4 $type->currency $tier->dvariant !currency_dvariant",variant,40,"Cyan Temp","2 Cyan Circle"),"");
+    if(vendor.length)  out.push(...mk("Show # %H3 $type->currency $tier->dsupply !currency_dlow",vendor,38,"White Temp","2 Grey Circle"),"");
+    out.pop();
+    lines.splice(i,end+1-i,...out);
+    log("ok","tier D split: "+loud.length+" kept loud, "+variant.length+
+             " Greater/Perfect variants stepped down, "+vendor.length+" vendor orbs quieted");
+  }
+  return lines;
+}
+
+function convert(text, theme, opts){
+  const nl = text.indexOf("\r\n")>=0 ? "\r\n" : "\n";
+  const before = text.split(nl);
+  const notes=[]; const log=(k,m)=>notes.push([k,m]);
+  const lines = structural(before.slice(), opts, log);
+  const out=lines.slice();
+  let spec=null, styled=0, touched=0;
+  const unmapped=new Set();
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    if(HEAD.test(line)){
+      const m=CLS.exec(line.trim());
+      spec=null;
+      if(m){
+        const role=RM[m[1]];
+        if(role && theme.roles[role]){ spec=theme.roles[role]; styled++; }
+        else if(!NOCOL.has(m[1])) spec={__unknown:m[1]};
+      }else{
+        for(const [re,role] of NOCLASS) if(re.test(line)){ spec=theme.roles[role]||null; break; }
+      }
+      continue;
+    }
+    if(!spec) continue;
+    const p=PROP.exec(line);
+    if(!p) continue;
+    if(spec.__unknown){ unmapped.add(spec.__unknown); continue; }
+    const val=spec[PROPKEY[p[3]]];
+    if(val===undefined) continue;
+    const nv = p[3]==="PlayEffect" ? beam(val,p[4]) : p[3]==="MinimapIcon" ? icon(val,p[4]) : colour(val,p[4]);
+    if(nv!==p[4]){ out[i]=p[1]+p[2]+p[3]+" "+nv; touched++; }
+  }
+  /* name the theme in the header comment; the game ignores it */
+  for(let i=0;i<20 && i<out.length;i++){
+    if(out[i].indexOf("# STYLE:")===0)
+      out[i]="# STYLE:    "+theme.name.toUpperCase()+(theme.author?" ("+theme.author.replace(/#.*/,"")+")":"");
+  }
+  return {text:out.join(nl), before, after:out, notes, styled, touched, unmapped:[...unmapped].sort()};
+}
+
+/* Verification: prove nothing but colour moved. The split rewrites one rule into three on
+   purpose, so the guarantee is that the set of items under Show and under Hide is identical. */
+function visibility(ls){
+  const shown=new Set(), hidden=new Set();
+  let cur=null;
+  for(const l of ls){
+    const h=HEAD.exec(l);
+    if(h){ cur = h[1]==="#" ? null : h[2]; continue; }   // commented-out rules are inert
+    if(!cur || !/^\s*(BaseType|Class)\b/.test(l)) continue;
+    const q=l.match(/"[^"]*"/g); if(!q) continue;
+    const bag = cur==="Show" ? shown : hidden;
+    for(const t of q) bag.add(t);
+  }
+  return {shown,hidden};
+}
+function setDiff(A,B){
+  let gone=0,came=0;
+  for(const v of A) if(!B.has(v)) gone++;
+  for(const v of B) if(!A.has(v)) came++;
+  return {gone,came,n:A.size};
+}
+function verify(before, after, opts){
+  const bag=(ls,re)=>{const m=new Map();for(const l of ls){const s=l.trim();if(re.test(s))m.set(s,(m.get(s)||0)+1);}return m;};
+  const cmp=re=>{const A=bag(before,re),B=bag(after,re);let add=0,rem=0;
+    for(const [k,v] of A){const w=B.get(k)||0; if(w<v) rem+=v-w;}
+    for(const [k,v] of B){const w=A.get(k)||0; if(w>v) add+=v-w;}
+    return {add,rem,n:[...A.values()].reduce((x,y)=>x+y,0)};};
+  const kw=(ls,w)=>ls.filter(l=>new RegExp("^\\s*"+w+"\\b").test(l)).length;
+  const rules=ls=>kw(ls,"Show")+kw(ls,"Hide");
+  const vb=visibility(before), va=visibility(after);
+  const ds=setDiff(vb.shown,va.shown), dh=setDiff(vb.hidden,va.hidden);
+  const split = opts.split ? 2 : 0;   // the split turns one rule into three
+  return [
+    ["Items shown",  {n:ds.n, add:ds.came, rem:ds.gone}, 0, 0],
+    ["Items hidden", {n:dh.n, add:dh.came, rem:dh.gone}, 0, 0],
+    ["Active rules", {n:rules(before), add:Math.max(0,rules(after)-rules(before)),
+                      rem:Math.max(0,rules(before)-rules(after))}, split, 0],
+    ["Alert sounds", cmp(/^#?\s*(CustomAlertSound|PlayAlertSound)\b/), split, 0],
+    ["Drop sounds",  cmp(/^#?\s*DisableDropSound\b/), 0, 0],
+    ["Font sizes",   cmp(/^#?\s*SetFontSize\b/), split, split],
+  ];
+}
+/* engine:end */
+
+/* ---------- page ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const INFO=D.roles.roleInfo;
+const themes=D.themes.slice();
+const rep=$("report"), prev=$("preview"), box=$("themes");
+let raw=null, fileName="", current=0;
+
+function opts(){ return {t0:$("o_t0").checked, split:$("o_split").checked}; }
+function cur(){ return themes[current]; }
+const rgb=v=>v?"rgb("+v.split(" ").slice(0,3).join(",")+")":"";
+
+function tile(t,i){
+  const r=t.roles, pick=[r.apex&&r.apex.g, r.currency_a&&r.currency_a.g, r.unique_a&&r.unique_a.g,
+                         r.gem_high&&r.gem_high.t, r.map_high&&r.map_high.t, r.exotic_high&&r.exotic_high.t];
+  const l=document.createElement("label"); l.className="tile";
+  l.innerHTML='<input type="radio" name="theme" value="'+i+'"><span class="nm">'+esc(t.name)+
+    '</span><span class="sw">'+pick.map(c=>'<i style="background:'+(rgb(c)||"var(--field)")+'"></i>').join("")+'</span>';
+  const input=l.querySelector("input");
+  input.checked = i===current;
+  input.addEventListener("change",()=>{ current=i; themeChanged(); });
+  return l;
+}
+function fillThemes(){
+  box.innerHTML="";
+  themes.forEach((t,i)=>box.appendChild(tile(t,i)));
+  $("tnote").textContent=cur().notes||"";
+}
+function themeChanged(){ $("tnote").textContent=cur().notes||""; drawPreview(); run(false); }
+
+const SIZE=r=>/apex|t0|top|huge|_a$/.test(r)?18:/low|dim|small|supply|_e$|_c$/.test(r)?13.5:15.5;
+function drawPreview(){
+  const th=cur(), groups=new Map();
+  for(const role in INFO){
+    const [label,item,cat]=INFO[role];
+    if(!th.roles[role]) continue;
+    if(!groups.has(cat)) groups.set(cat,[]);
+    groups.get(cat).push([role,label,item,th.roles[role]]);
+  }
+  prev.innerHTML="";
+  for(const [cat,rows] of groups){
+    const g=document.createElement("div"); g.className="grp";
+    const h=document.createElement("h3"); h.textContent=cat; g.appendChild(h);
+    const list=document.createElement("div"); list.className="rows";
+    for(const [role,label,item,e] of rows){
+      const r=document.createElement("div"); r.className="drop-row";
+      const s=document.createElement("span"); s.className="drop-lbl"; s.textContent=item;
+      s.style.fontSize=SIZE(role)+"px";
+      s.style.color = e.t ? rgb(e.t) : "#cfcad6";
+      s.style.background = e.g ? rgb(e.g) : "rgba(0,0,0,.5)";
+      s.style.borderColor = e.b ? rgb(e.b) : "transparent";
+      const n=document.createElement("span"); n.className="rname"; n.textContent=label;
+      r.appendChild(s); r.appendChild(n); list.appendChild(r);
+    }
+    g.appendChild(list); prev.appendChild(g);
+  }
+}
+
+function report(res){
+  const rows=verify(res.before,res.after,opts());
+  let html="", bad=false;
+  for(const [name,d,okAdd,okRem] of rows){
+    const clean = d.rem<=okRem && d.add<=okAdd;
+    if(!clean) bad=true;
+    html += (clean?'<span class="ok">  OK  </span>':'<span class="bad"> DIFF </span>')
+          + name.padEnd(15," ") + String(d.n).padStart(5," ") + (name.indexOf("Items")===0 ? " entries" : " lines  ")
+          + (d.add||d.rem ? "   (+"+d.add+" / -"+d.rem+")" : "") + "\n";
+  }
+  html += "\n" + res.styled + " rules styled, " + res.touched + " colour lines rewritten\n";
+  for(const [k,m] of res.notes)
+    html += (k==="ok"?'<span class="ok">  +  </span>':'<span class="warn"> !!  </span>')+esc(m)+"\n";
+  if(res.unmapped.length){
+    html += '\n<span class="warn">Not in this theme (left at original colours):</span>\n';
+    for(const c of res.unmapped) html += "    !"+esc(c)+"\n";
+  }
+  if(bad) html = '<span class="bad">Something beyond colour changed. Don\'t use this file.</span>\n\n'+html;
+  rep.innerHTML=html;
+}
+
+function run(download){
+  if(!raw) return;
+  const res=convert(raw,cur(),opts());
+  report(res);
+  if(!download) return;
+  const blob=new Blob([res.text],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=fileName.replace(/\.filter$/i,"")+" - "+cur().name+".filter";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  countDownload();
+}
+
+function take(f){
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    raw=e.target.result; fileName=f.name;
+    $("fname").textContent=f.name;
+    $("fsub").textContent=raw.split(/\r?\n/).length.toLocaleString()+" lines · click to replace";
+    $("drop").classList.add("has");
+    $("go").disabled=false; run(false);
+  };
+  r.readAsText(f);
+}
+
+/* ---------- usage counter ----------
+   Only the published site counts, so local copies and testing never do. A download adds one to
+   "filters"; the first download from a browser also adds one to "players". Nothing else is sent. */
+const COUNTER="https://abacus.jasoncameron.dev", NS="lucicmd.github.io";
+const KEYS={filters:"poe2-filter-themer-filters", people:"poe2-filter-themer-players"};
+const LIVE=location.hostname==="lucicmd.github.io";
+function show(id,v){ if(typeof v==="number"){ $(id).textContent=v.toLocaleString(); $("stats").hidden=false; } }
+function counter(op,key){
+  return fetch(COUNTER+"/"+op+"/"+NS+"/"+key).then(r=>r.ok?r.json():{value:0}).then(j=>j.value).catch(()=>undefined);
+}
+function loadCounts(){
+  if(!LIVE){ $("privacy").textContent="This copy runs offline and sends nothing at all."; return; }
+  counter("get",KEYS.filters).then(v=>show("s_filters",v));
+  counter("get",KEYS.people).then(v=>show("s_people",v));
+}
+function countDownload(){
+  if(!LIVE) return;
+  counter("hit",KEYS.filters).then(v=>show("s_filters",v));
+  let seen=false;
+  try{ seen=localStorage.getItem("counted")==="1"; }catch(e){}
+  if(seen) return;
+  counter("hit",KEYS.people).then(v=>{
+    show("s_people",v);
+    try{ localStorage.setItem("counted","1"); }catch(e){}
+  });
+}
+
+/* ---------- ⓘ descriptions: shown at once, beside the pointer on the side with room ---------- */
+const tip=$("tip");
+const ICON='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="4.9" r=".95" fill="currentColor"/><rect x="7.3" y="6.8" width="1.4" height="4.6" rx=".7" fill="currentColor"/></svg>';
+function place(x,y){
+  const w=tip.offsetWidth, h=tip.offsetHeight, gap=18, pad=8;
+  let left = x+gap+w <= innerWidth-pad ? x+gap : x-gap-w;
+  left=Math.max(pad,Math.min(left,innerWidth-pad-w));
+  const top=Math.max(pad,Math.min(y-h/2,innerHeight-pad-h));
+  tip.style.left=left+"px"; tip.style.top=top+"px";
+}
+function openTip(el,x,y){ tip.textContent=el.dataset.tip; tip.style.display="block"; place(x,y); }
+function closeTip(){ tip.style.display="none"; }
+document.querySelectorAll(".info").forEach(el=>{
+  el.innerHTML=ICON;
+  el.setAttribute("role","img"); el.setAttribute("aria-label",el.dataset.tip);
+  const atIcon=()=>{const r=el.getBoundingClientRect(); openTip(el,r.right,r.top+r.height/2);};
+  el.addEventListener("pointerenter",e=>{ if(e.pointerType==="mouse") openTip(el,e.clientX,e.clientY); });
+  el.addEventListener("pointermove",e=>{ if(e.pointerType==="mouse") place(e.clientX,e.clientY); });
+  el.addEventListener("pointerleave",e=>{ if(e.pointerType==="mouse") closeTip(); });
+  el.addEventListener("click",e=>{ e.stopPropagation(); atIcon(); });   // touch: a tap opens it
+  el.addEventListener("focus",atIcon);
+  el.addEventListener("blur",closeTip);
+});
+addEventListener("click",closeTip);
+addEventListener("scroll",closeTip,{passive:true});
+
+/* ---------- wiring ---------- */
+$("drop").addEventListener("click",()=>$("file").click());
+$("drop").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("file").click();}});
+$("file").addEventListener("change",e=>take(e.target.files[0]));
+["dragenter","dragover"].forEach(t=>$("drop").addEventListener(t,e=>{e.preventDefault();$("drop").classList.add("over");}));
+["dragleave","drop"].forEach(t=>$("drop").addEventListener(t,e=>{e.preventDefault();$("drop").classList.remove("over");}));
+$("drop").addEventListener("drop",e=>take(e.dataTransfer.files[0]));
+["o_t0","o_split"].forEach(id=>$(id).addEventListener("change",()=>run(false)));
+$("go").addEventListener("click",()=>run(true));
+$("loadtheme").addEventListener("click",()=>$("tfile").click());
+$("tfile").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  e.target.value="";
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const t=JSON.parse(ev.target.result);
+      if(!t||!t.roles||typeof t.roles!=="object") throw new Error('no "roles" object');
+      t.name=String(t.name||f.name.replace(/\.json$/i,""));
+      const known=new Set(Object.values(RM).concat(D.roles.noClass.map(x=>x[1])));
+      const miss=[...known].filter(k=>!t.roles[k]);
+      themes.push(t); current=themes.length-1; fillThemes(); drawPreview(); run(false);
+      if(miss.length) rep.innerHTML='<span class="warn">Theme loaded, but '+miss.length+
+        ' roles are missing and will keep their original colours:</span>\n    '+
+        miss.map(esc).join("\n    ")+"\n\n"+(raw?rep.innerHTML:"");
+    }catch(err){ rep.innerHTML='<span class="bad">Couldn\'t read that theme file: '+esc(err.message)+'</span>'; }
+  };
+  r.readAsText(f);
+});
+
+fillThemes(); drawPreview(); loadCounts();
+})();
+</script>
+</body>
+</html>
